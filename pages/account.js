@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
 import Auth from '../components/Auth'
 import Account from '../components/Account'
-import Home from '../components/Home'
 
-export default function Index() {
+export default function AccountPage() {
   const [session, setSession] = useState(null)
 
   useEffect(() => {
@@ -17,7 +16,7 @@ export default function Index() {
 
   return (
     <div className="container" style={{ padding: '50px 0 100px 0' }}>
-      {!session ? <Auth /> : <Home key={session.user.id} session={session}/>}
+      {!session ? <Auth /> : <Account key={session.user.id} session={session} />}
     </div>
   )
 }
