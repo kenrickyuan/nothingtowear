@@ -16,7 +16,6 @@ export default function Home({ session }) {
     const data = await response.json()
     setStockXSneakersList(data?.products)
   }
-
   const getUserSneakers = async () => {
     const { data: sneakerIds, error} = await supabase
       .from('user_sneakers')
@@ -33,19 +32,24 @@ export default function Home({ session }) {
     console.log(sneakerIds)
   }
 
-  const getAllSneakerModels = async () => {
-    let { data: sneaker_models, error } = await supabase
-      .from('sneaker_models')
-      .select('*')
-    console.log(sneaker_models)
-  }
+  // const getAllSneakerModels = async () => {
+  //   let { data: sneaker_models, error } = await supabase
+  //     .from('sneaker_models')
+  //     .select('*')
+  //   console.log(sneaker_models)
+  // }
 
   const addSneakerToDatabase = async (sneaker) => {
     let brandId
     let silhouetteId
     let modelId
+    let savedThumbnailPath
     console.log({sneaker})
     const brandName = sneaker.brand?.trim().toLowerCase()
+    const silhouette = sneaker.silhoutte?.trim().toLowerCase()
+    const modelName = sneaker.shoeName
+    const sku = sneaker.styleID
+    const colourway = sneaker.colorway
     // See if brand exists by checking brand (brand name, lower cased)
     const { data: brandInDb, error: brandInDbError} = await supabase
       .from('brands')
@@ -72,7 +76,6 @@ export default function Home({ session }) {
       console.log('brand found', brandId)
     }
 
-    const silhouette = sneaker.silhoutte?.trim().toLowerCase()
     // See if sneaker silhouette exists by checking 'silhoutte'
     const { data: silhouetteInDb, error: silhouetteInDbError} = await supabase
       .from('sneaker_silhouettes')
@@ -102,12 +105,9 @@ export default function Home({ session }) {
       console.log('silhouette found', silhouetteId)
     }
     // See if sneaker model already exists by checking styleId(SKU) and shoeName
-    const modelName = sneaker.shoeName
-    const sku = sneaker.styleID
-    const colourway = sneaker.colorway
     const { data: modelInDb, error: modelInDbError } = await supabase
       .from('sneaker_models')
-      .select('id')
+      .select('id, thumbnail_url')
       .eq('name', modelName)
       .eq('sku', sku)
       .eq('colourway', colourway)
@@ -144,9 +144,11 @@ export default function Home({ session }) {
       console.log({ newModelInDb })
       // --> get model id
       modelId = newModelInDb[0].id
+      savedThumbnailPath = newModelInDb[0].thumbnail_url
     } else {
       modelId = modelInDb[0]?.id
-      console.log('model found', modelId)
+      savedThumbnailPath = modelInDb[0].thumbnail_url
+      console.log('model found', modelInDb[0])
     }
 
     // See if sneaker already exists in user's sneaker db
@@ -161,7 +163,13 @@ export default function Home({ session }) {
       // if not, add to user's sneaker db
       console.log("sneaker doesn't exist yet")
       // set all states to prefill sneaker modal, open modal for user to input data
-      setSneakerToAddData({ brandId, silhouetteId, modelId, modelName, })
+      const { data: publicThumbnailUrl, error } = await supabase.storage.from('thumbnail-images').getPublicUrl(savedThumbnailPath)
+      if (error) {
+        throw error
+      }
+      const savedThumbnailUrl = publicThumbnailUrl.publicURL
+
+      setSneakerToAddData({ brandId, silhouetteId, modelId, savedThumbnailUrl: savedThumbnailUrl, silhouetteName: silhouette, colourwayName: colourway, brandName, customName: modelName, wearInRain: false})
       setShowAddSneakerModal(true)
     } else {
       // else, tell them it already exists
@@ -169,10 +177,27 @@ export default function Home({ session }) {
     }
   }
 
+  const handleFormSubmit = async e => {
+    e.preventDefault()
+    const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
+      .from('user_sneakers')
+      .insert([
+        { custom_name: sneakerToAddData.customName, location: sneakerToAddData.location, wear_in_rain: sneakerToAddData.wearInRain, profile_id: session.user.id, sneaker_model_id: sneakerToAddData.modelId},
+      ])
+    if (newUserSneakerInDbError) {
+      console.error(newUserSneakerInDbError)
+    } else {
+      console.log('form submitted')
+      console.log(newUserSneakerInDb)
+      setShowAddSneakerModal(false)
+      setSneakerToAddData({})
+    }
+  }
+
   useEffect(() => {
-    console.log('inside useEffect')
+    // console.log('inside useEffect', session.user.id)
     getUserSneakers()
-    getAllSneakerModels()
+    // getAllSneakerModels()
   }, [session])
 
   useEffect(() => {
@@ -184,13 +209,39 @@ export default function Home({ session }) {
       <div>HOMEPAGE!</div>
       <input type="text" name="sneakerQuery" value={sneakerQuery} onChange={e => setSneakerQuery(e.target.value)}></input>
       <button onClick={() => searchSneakers(sneakerQuery)}>Search Sneaker</button>
-      {/* <form className={`${showAddSneakerModal ? '' : 'hidden' }fixed inset-0 bg-white`}>
+      <form onSubmit={handleFormSubmit} className={`${showAddSneakerModal ? '' : 'hidden' } fixed inset-0 bg-white z-10`}>
+        {sneakerToAddData?.savedThumbnailUrl && (
+          <div className="w-full h-44 relative">
+            <Image src={sneakerToAddData?.savedThumbnailUrl} layout="fill" objectFit="contain" />
+          </div>
+        )}
         <label>
           Name:
-          <input type="text" name="name" value={sneakerToAddData.}/>
+          <input type="text" name="name" value={sneakerToAddData.customName} onChange={e => setSneakerToAddData({ ...sneakerToAddData, customName: e.target.value})}/>
         </label>
-        <input type="submit" value="Submit" />
-      </form> */}
+        <label>
+          Location:
+          <input type="text" name="location" value={sneakerToAddData.location || ""} onChange={e => setSneakerToAddData({ ...sneakerToAddData, location: e.target.value})}/>
+        </label>
+        <label>
+          Can wear in rain:
+          <input type="checkbox" name="wearInRain" checked={sneakerToAddData.wearInRain} onChange={e => setSneakerToAddData({ ...sneakerToAddData, wearInRain: !sneakerToAddData.wearInRain})}/>
+        </label>
+
+        <label>
+          Brand:
+          <input className='capitalize' type="text" name="brand" value={sneakerToAddData.brandName} disabled />
+        </label>
+        <label>
+          Silhouette:
+          <input className='capitalize' type="text" name="silhouette" value={sneakerToAddData.silhouetteName} disabled />
+        </label>
+        <label>
+          Colourway:
+          <input type="text" name="colourway" value={sneakerToAddData.colourwayName} disabled />
+        </label>
+        <input type="submit" value="Submit"/>
+      </form>
       <div>
         {stockXSneakersList?.map(sneaker => (
           <div key={sneaker._id}>
