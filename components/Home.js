@@ -14,6 +14,8 @@ export default function Home({ session }) {
   const searchSneakers = async (query) => {
     const response = await fetch(`http://localhost:3000/api/sneaker/name?query=${query}`)
     const data = await response.json()
+    console.log(data?.products)
+    console.log('hello')
     setStockXSneakersList(data?.products)
   }
   const getUserSneakers = async () => {
@@ -49,7 +51,8 @@ export default function Home({ session }) {
     const silhouette = sneaker.silhoutte?.trim().toLowerCase()
     const modelName = sneaker.shoeName
     const sku = sneaker.styleID
-    const colourway = sneaker.colorway
+    const sneakerColours = sneaker.colorway
+    const colourway = sneaker.shoeName.replace(sneaker.silhoutte, "").trim()
     // See if brand exists by checking brand (brand name, lower cased)
     const { data: brandInDb, error: brandInDbError} = await supabase
       .from('brands')
@@ -110,7 +113,6 @@ export default function Home({ session }) {
       .select('id, thumbnail_url')
       .eq('name', modelName)
       .eq('sku', sku)
-      .eq('colourway', colourway)
     if (modelInDbError) {
       return console.error(modelInDbError)
     }
@@ -136,7 +138,7 @@ export default function Home({ session }) {
       const { data: newModelInDb, error: newModelInDbError } = await supabase
         .from('sneaker_models')
         .insert([
-          { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colourway: colourway, thumbnail_url: thumbnailUrl},
+          { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colours: sneakerColours, colourway: colourway, thumbnail_url: thumbnailUrl},
         ])
       if (newModelInDbError) {
         console.error(newModelInDbError)

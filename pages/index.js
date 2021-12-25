@@ -16,7 +16,7 @@ export default function Index() {
   }, [])
 
   return (
-    <div className="container" style={{ padding: '50px 0 100px 0' }}>
+    <div className="">
       {!session ? <Auth /> : <Home key={session.user.id} session={session}/>}
     </div>
   )
