@@ -4,7 +4,9 @@ export const Layout = ({ children, global }) => {
   // const { header, footer } = global || {}
   return (
     <>
-      {children}
+      <main>
+        {children}
+      </main>
       <Footer />
       {/* <Footer {...footer} /> */}
     </>

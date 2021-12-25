@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
-import Auth from '../components/Auth'
+import Auth from '../components/account/Auth'
 import Sneakers from '../components/Sneakers'
 
 export default function SneakersPage() {
@@ -15,7 +15,7 @@ export default function SneakersPage() {
   }, [])
 
   return (
-    <div className="container" style={{ padding: '50px 0 100px 0' }}>
+    <div className="">
       {!session ? <Auth /> : <Sneakers session={session} />}
     </div>
   )

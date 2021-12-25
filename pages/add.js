@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
 import { useRouter } from 'next/router'
-import Sneakers from '../components/page/Sneakers'
 
+import AddSneaker from '../components/page/AddSneaker'
 
-export default function Index() {
+export default function AddSneakerPage() {
   const router = useRouter()
   const [session, setSession] = useState(null)
   const [triedToLogin, setTriedToLogin] = useState(false)
@@ -26,7 +26,7 @@ export default function Index() {
 
   return (
     <div className="">
-      {session && <Sneakers key={session.user.id} session={session} />}
+      {session && <AddSneaker key={session.user.id} session={session} />}
     </div>
   )
 }

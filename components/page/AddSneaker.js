@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { supabase } from "../../utils/supabaseClient"
 import imageToBase64 from 'image-to-base64/browser';
 import { decode } from 'base64-arraybuffer'
 
 import Image from 'next/image'
 
-export default function Home({ session }) {
+export default function AddSneaker({ session }) {
   const [sneakerQuery, setSneakerQuery] = useState('')
   const [stockXSneakersList, setStockXSneakersList] = useState([])
   const [sneakerToAddData, setSneakerToAddData] = useState({})
@@ -208,7 +208,6 @@ export default function Home({ session }) {
   
   return (
     <>
-      <div>HOMEPAGE!</div>
       <input type="text" name="sneakerQuery" value={sneakerQuery} onChange={e => setSneakerQuery(e.target.value)}></input>
       <button onClick={() => searchSneakers(sneakerQuery)}>Search Sneaker</button>
       <form onSubmit={handleFormSubmit} className={`${showAddSneakerModal ? '' : 'hidden' } fixed inset-0 bg-white z-10`}>

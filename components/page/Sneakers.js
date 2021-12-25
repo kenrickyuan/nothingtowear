@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { supabase } from "../../utils/supabaseClient"
 import Image from 'next/image'
 
 export default function Sneakers({ session }) {
