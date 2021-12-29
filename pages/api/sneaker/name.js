@@ -4,7 +4,7 @@ const SneaksAPI = require('sneaks-api');
 export default function handler(req, res) {
   const sneaks = new SneaksAPI();
   const { query } = req.query
-  sneaks.getProducts(query, 10, function(err, products){
+  sneaks.getProducts(query, 20, function(err, products){
     if (err) {
       res.status(500).json({ err })
     } else {

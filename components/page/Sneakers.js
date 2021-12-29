@@ -49,7 +49,7 @@ export default function Sneakers({ session }) {
             <div key={sneaker.sneaker_models.id}>
               <h3>{sneaker.sneaker_models.name}</h3>
               <div className="w-full h-44 relative">
-                <Image src={sneaker.publicThumbnailUrl} layout="fill" objectFit="contain" />
+                <Image src={sneaker.publicThumbnailUrl} layout="fill" objectFit="contain" alt={sneaker.sneaker_models.name} />
               </div>
             </div>
           )
