@@ -48,6 +48,12 @@
     }
   }
 
+  .react-colorful {
+    margin: 0 auto;
+    width: min(300px, 30vh) !important;
+    height: min(300px, 30vh) !important;
+  }
+
 }
 
 html, body {

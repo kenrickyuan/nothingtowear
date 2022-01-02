@@ -1,37 +1,27 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
-import { searchSneakers, supabase, addSneakerToDb, getUserColours } from '../../utils';
+import { searchSneakers, supabase, addSneakerToDb, addUserColour, getUserColours } from '../../utils';
+import { HexColorPicker, HexColorInput } from "react-colorful";
+import { useUI } from "../../hooks"
 
 export default function AddSneaker({ session }) {
+  const { openErrorModal, closeErrorModal, displayErrorModal } = useUI()
   const [sneakerQuery, setSneakerQuery] = useState('')
   const [stockXSneakersList, setStockXSneakersList] = useState([])
   const [sneakerToAddData, setSneakerToAddData] = useState({})
+  const { stockXSneakerData } = sneakerToAddData
   const [showAddSneakerModal, setShowAddSneakerModal] = useState(false)
   const [showEditColoursModal, setShowEditColoursModal] = useState(false)
   const [showCreateUserColourModal, setShowCreateUserColourModal] = useState(false)
   const [addSneakerModalStep, setAddSneakerModalStep] = useState("")
   const [loading, setLoading] = useState(false)
   const [addToDbLoading, setAddToDbLoading] = useState(false)
+  const [addUserColourLoading, setAddUserColourLoading] = useState(false)
+  const [newColourHex, setNewColourHex] = useState("#397273");
+  const [newColourName, setNewColourName] = useState("");
   const searchInputRef = useRef(null)
-
-  const {stockXSneakerData} = sneakerToAddData
-
-  const handleFormSubmit = async e => {
-    e.preventDefault()
-    const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
-      .from('user_sneakers')
-      .insert([
-        { custom_name: sneakerToAddData.customName, location: sneakerToAddData.location, wear_in_rain: sneakerToAddData.wearInRain, profile_id: session.user.id, sneaker_model_id: sneakerToAddData.modelId},
-      ])
-    if (newUserSneakerInDbError) {
-      console.error(newUserSneakerInDbError)
-    } else {
-      console.log('form submitted')
-      console.log(newUserSneakerInDb)
-      setShowAddSneakerModal(false)
-      setSneakerToAddData({})
-    }
-  }
+  const [userColours, setUserColours] = useState([]);
+  const [selectedSneakerColours, setSelectedSneakerColours] = useState([])
 
   const handleSearchSubmit = async e => {
     console.log('search submitted')
@@ -62,14 +52,91 @@ export default function AddSneaker({ session }) {
     setAddToDbLoading(false);
   }
 
-  useEffect(() => {
-    console.log(sneakerToAddData)
-  }, [sneakerToAddData])
+  const handleFormSubmit = async e => {
+    e.preventDefault()
+    if (addSneakerModalStep === "details") {
+      const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
+        .from('user_sneakers')
+        .insert([
+          { custom_name: sneakerToAddData.customName, location: sneakerToAddData.location, wear_in_rain: sneakerToAddData.wearInRain, profile_id: session.user.id, sneaker_model_id: sneakerToAddData.modelId },
+        ])
+      if (newUserSneakerInDbError) {
+        return console.error(newUserSneakerInDbError)
+      }
+      const addSneakerColourJoin = async (colour) => {
+        const { data: newSneakerColourJoin, error: newSneakerColourJoinError } = await supabase
+          .from('user_sneaker_user_colour')
+          .insert([
+            { user_sneaker_id: newUserSneakerInDb[0].id, user_colour_id: colour.id, profile_id: session.user.id },
+          ])
+        if (newSneakerColourJoinError) {
+          return console.error(newSneakerColourJoinError)
+        }
+        return newSneakerColourJoin
+      }
+      // create user_sneaker_user_colour join table entries
+      await Promise.all(sneakerToAddData.sneakerColours.map(addSneakerColourJoin))
+      setShowAddSneakerModal(false)
+      setSneakerToAddData({})
+      setAddSneakerModalStep("")
+    } else {
+      handleAddSneakerToDbClick(e)
+    }
+  }
+
+  const handleAddNewUserColourClick = async (e) => {
+    e.preventDefault()
+    setAddUserColourLoading(true)
+    await addUserColour({ newColourHex, setNewColourHex, newColourName, setNewColourName, openErrorModal, setShowCreateUserColourModal, userColours, setUserColours, profileId: session.user.id })
+    setAddUserColourLoading(false)
+  }
+
+  const handleColourNameInputKeyDown = e => {
+    switch (e.keyCode) {
+      case 8:  // Backspace
+      case 9:  // Tab
+      case 13: // Enter
+      case 37: // Left
+      case 38: // Up
+      case 39: // Right
+      case 40: // Down
+        break;
+      default:
+        const regex = /^[a-zA-Z\s]*$/;
+        const key = e.key;
+        if (!regex.test(key)) {
+          console.log('invalid key!')
+          e.preventDefault();
+          return false;
+        }
+        break;
+    }
+  }
+
+  const handleAddSelectedColour = (colour) => {
+    setSelectedSneakerColours([...selectedSneakerColours, colour])
+  }
+
+  const handleRemoveSelectedColour = (colour) => {
+    setSelectedSneakerColours(selectedSneakerColours.filter(selectedColour => selectedColour.id !== colour.id))
+  }
+
+  const handleSaveSneakerColoursClick = () => {
+    setSneakerToAddData({...sneakerToAddData, sneakerColours: selectedSneakerColours})
+    setShowEditColoursModal(false)
+  }
   
   useEffect(() => {
-    getUserColours()
+    (async () => {
+      const fetchedUserColours = await getUserColours()
+      setUserColours(fetchedUserColours)
+    })();
   }, [])
-  
+
+  useEffect(() => {
+    console.log(userColours)
+  }, [userColours])
+
   return (
     <div className='mt-[79px]'>
       <div className={`${loading ? "flex" : "hidden"} fixed inset-0 justify-center items-center bg-black opacity-50 z-40`}>
@@ -95,7 +162,6 @@ export default function AddSneaker({ session }) {
           }>
             <Image src="/cross-cancel.svg" height={20} width={20} alt="Clear search button" />
           </button>
-          {/* <button className='button uppercase text-base'>Search</button> */}
         </form>
       </header>
 
@@ -152,7 +218,7 @@ export default function AddSneaker({ session }) {
               <div className='border-t-[1px] border-lightGrey p-4'>
                 <p className='text-grey text-xs'>Can Wear</p>
                 <input className="hidden peer" id="wearInRain" type="checkbox" name="wearInRain" checked={sneakerToAddData.wearInRain} onChange={e => setSneakerToAddData({ ...sneakerToAddData, wearInRain: !sneakerToAddData.wearInRain })} />
-                  <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
+                  <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
                     {sneakerToAddData.wearInRain ? "Even in the rain" : "Only on sunny days"}
                     <div className={`${sneakerToAddData.wearInRain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute left-0 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
                     <div className={`${sneakerToAddData.wearInRain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute left-0 transition-transform w-[1px] h-2 bg-white`}></div>
@@ -161,9 +227,9 @@ export default function AddSneaker({ session }) {
               </div>
               <div className='border-t-[1px] border-lightGrey p-4'>
                 <p className='text-grey text-xs'>Colours</p>
-                <div className='grid grid-cols-8 mt-2 gap-4'>
+                <div className='grid grid-cols-[repeat(8,30px)] justify-between mt-2'>
                   {sneakerToAddData?.sneakerColours?.map(colour => (
-                    <div key={colour._id} className='w-[30px] h-[30px] m-auto rounded-full' style={`background-color: #${colour.hexcode}`}></div>
+                    <div key={colour.id} className='w-[30px] h-[30px] m-auto rounded-full border-[1px] border-lightGrey' style={{ backgroundColor: `#${colour.hexcode}` }}></div>
                   ))}
                     <button type='button' className='relative w-[30px] h-[30px] m-auto bg-lightGrey rounded-full flex items-center justify-center pointer-events-none' onClick={() => setShowEditColoursModal(true)}>
                     <Image className='pointer-events-auto' src="/pencil.svg" height={14} width={14} alt="Edit colours" />
@@ -172,7 +238,6 @@ export default function AddSneaker({ session }) {
                     )}
                   </button>
                 </div>
-                  {console.log(!sneakerToAddData?.sneakerColours)}
               </div>
             </>
             ) : addSneakerModalStep === "exists" ? (
@@ -181,7 +246,7 @@ export default function AddSneaker({ session }) {
               </div>
             ) : null }
         </div>
-        <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddSneakerToDbClick(e)}>
+        <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
           {addToDbLoading ? "adding..." : addSneakerModalStep === "" ? "Add To Collection" : "Save"}
         </button>
       </div>
@@ -203,34 +268,34 @@ export default function AddSneaker({ session }) {
         </div>
         <div className='border-t-[1px] border-lightGrey p-4'>
           <p className='font-semibold mb-2'>Selected</p>
-          <div className='grid grid-cols-2'>
-            <button className='flex items-center pointer-events-none' onClick={() => console.log('button clicked')}>
-              <div className='w-10 h-10 rounded-full mr-4 bg-white border-2 border-black pointer-events-auto'></div>
-              <p className='font-semibold pointer-events-auto'>White</p>
-            </button>
-            <button className='flex items-center pointer-events-none' onClick={() => console.log('button clicked')}>
-              <div className='w-10 h-10 rounded-full mr-4 bg-black border-2 border-black pointer-events-auto'></div>
-              <p className='font-semibold pointer-events-auto'>Black</p>
-            </button>
+          <div className='grid grid-cols-2 gap-y-4 min-h-[40px]'>
+            {selectedSneakerColours.length === 0 ? (
+              <p className='col-span-2 text-grey m-auto mx-0'>No selected colours yet.</p>
+            ) : (
+              selectedSneakerColours.map(colour => (
+                <button key={colour.id} className='flex items-center pointer-events-none' onClick={() => handleRemoveSelectedColour(colour)}>
+                  <div className='w-10 h-10 rounded-full mr-4 border-2 border-black pointer-events-auto' style={{ backgroundColor: `#${colour.hexcode}` }}></div>
+                  <p className='pointer-events-auto capitalize font-semibold'>{colour.name}</p>
+                </button>
+              ))
+            )}
           </div>
         </div>
         <div className='border-t-[1px] border-lightGrey p-4'>
           <div className='grid grid-cols-2 gap-y-4'>
-            <div className='flex items-center'>
-              <div className='w-10 h-10 rounded-full mr-4 bg-black'></div>
-              <p className=''>Black</p>
-            </div>
-            <div className='flex items-center'>
-              <div className='w-10 h-10 rounded-full mr-4 bg-black'></div>
-              <p className=''>Black</p>
-            </div>
+            {userColours.filter(userColour => selectedSneakerColours.every(selectedColour => selectedColour.id !== userColour.id)).sort((a, b) => a.name.localeCompare(b.name)).map(colour => (
+              <button type="button" key={colour.id} className='flex items-center pointer-events-none' onClick={() => handleAddSelectedColour(colour)}>
+                <div className='pointer-events-auto w-10 h-10 rounded-full mr-4 border-[1px] border-lightGrey' style={{backgroundColor:`#${colour.hexcode}`}}></div>
+                <p className='pointer-events-auto capitalize'>{colour.name}</p>
+              </button>
+            ))}
             <button type="button" className='relative w-10 h-10 bg-lightGrey rounded-full flex items-center justify-center pointer-events-none col-span-2' onClick={() => setShowCreateUserColourModal(true)}>
               <Image className='pointer-events-auto' src="/plus.svg" height={20} width={20} alt="Add more colours" />
               <p className='absolute left-full ml-2 whitespace-nowrap text-grey pointer-events-auto'>Create a new colour</p>
             </button>
           </div>
         </div>
-        <button className={`bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => console.log(e)}>
+        <button className={`bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={() => handleSaveSneakerColoursClick()}>
           Save Colours
         </button>
       </div>
@@ -239,19 +304,35 @@ export default function AddSneaker({ session }) {
       <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
         e.preventDefault()
         setShowCreateUserColourModal(false)
+        setNewColourHex("#397273")
+        setNewColourName("")
       }}></div>
       {/* Sneaker colour edit modal */}
       <div className={`${showCreateUserColourModal ? "translate-x-0" : "translate-y-full"} fixed z-[80] top-24 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
           setShowCreateUserColourModal(false)
+          setNewColourHex("#397273")
+          setNewColourName("")
         }}>
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
           <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
-        <div className='border-t-[1px] border-lightGrey p-4'></div>
+        <div className='border-t-[1px] border-lightGrey p-4 h-[calc(100vh-15rem)] overflow-y-scroll pb-[82px]'>
+          <HexColorPicker color={newColourHex} onChange={setNewColourHex} />
+          <div className='flex items-center justify-center gap-4 mt-4'>
+            <div className='rounded-full w-10 h-10 border-2 border-lightGrey' style={{backgroundColor: newColourHex}}></div>
+            <div className='relative before:content-["#"] before:absolute before:top-[9px] before:left-2'>
+              <HexColorInput className='text-center w-[10ch] uppercase' color={newColourHex} onChange={setNewColourHex} />
+            </div>
+          </div>
+          <input className='mx-auto block mt-4' type="text" placeholder='*Name your colour' onKeyDown={e => handleColourNameInputKeyDown(e)} value={newColourName} onChange={e => setNewColourName(e.target.value)}></input>
+        </div>
+        <button disabled={newColourName === ""} className={`disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
+          {addUserColourLoading ? "adding colour..." : "Add Colour"}
+        </button>
       </div>
 
       <ul>

@@ -5,7 +5,8 @@ export const getUserColours = async () => {
     .from('user_colours')
     .select(`
       name,
-      hexcode
+      hexcode,
+      id
     `)
   if (error) {
     return console.error(error)
