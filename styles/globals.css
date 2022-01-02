@@ -23,11 +23,13 @@
     height: 4px;
     border-radius: 30px;
   }
-
   .spinning-loader {
     border-top-color: white;
     -webkit-animation: spinner 1.5s linear infinite;
     animation: spinner 1.5s linear infinite;
+  }
+  .grid-shadow {
+    box-shadow: #E3E3E3 0px 0px 0px 1px;
   }
 
   @-webkit-keyframes spinner {
@@ -56,8 +58,8 @@
 
 }
 
-html, body {
-  padding-bottom: 72px;
+body {
+  padding-bottom: 88px;
 }
 
 input, textarea {

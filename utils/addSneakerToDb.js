@@ -12,8 +12,8 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
   const silhouette = stockXSneakerData.silhoutte?.trim().toLowerCase()
   const modelName = stockXSneakerData.shoeName
   const sku = stockXSneakerData.styleID
-  const sneakerColours = stockXSneakerData.colorway
-  const colourway = stockXSneakerData.shoeName.replace(stockXSneakerData.silhoutte, "").trim()
+  const colourway = stockXSneakerData.colorway
+  const colourwayName = stockXSneakerData.shoeName.replace(stockXSneakerData.silhoutte, "").trim()
   // See if brand exists by checking brand (brand name, lower cased)
   const { data: brandInDb, error: brandInDbError } = await supabase
     .from('brands')
@@ -99,7 +99,7 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     const { data: newModelInDb, error: newModelInDbError } = await supabase
       .from('sneaker_models')
       .insert([
-        { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colours: sneakerColours, colourway: colourway, thumbnail_url: thumbnailUrl },
+        { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colourway, colourway_name: colourwayName, thumbnail_url: thumbnailUrl },
       ])
     if (newModelInDbError) {
       console.error(newModelInDbError)
@@ -132,7 +132,7 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     }
     const savedThumbnailUrl = publicThumbnailUrl.publicURL
 
-    setSneakerToAddData({ stockXSneakerData, brandId, silhouetteId, modelId, savedThumbnailUrl: savedThumbnailUrl, silhouetteName: silhouette, colourwayName: colourway, brandName, customName: modelName, wearInRain: false })
+    setSneakerToAddData({ stockXSneakerData, brandId, silhouetteId, modelId, savedThumbnailUrl: savedThumbnailUrl, silhouetteName: silhouette, colourwayName, brandName, customName: modelName, wearInRain: false })
     setAddSneakerModalStep("details")
   } else {
     // else, tell them it already exists
