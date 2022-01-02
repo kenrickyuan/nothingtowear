@@ -1,4 +1,6 @@
 export * from "./searchSneakers"
+export * from "./getUserColours"
+export * from "./addUserColour"
 export * from "./addSneakerToDb"
 export * from "./supabaseClient"
 export * from "./tryCatch"

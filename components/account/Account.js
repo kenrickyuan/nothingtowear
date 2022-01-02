@@ -64,7 +64,7 @@ export default function Account({ session }) {
   }
 
   return (
-    <div className="form-widget">
+    <div className="flex flex-col">
       <Avatar
         url={avatar_url}
         size={150}

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer utilities {
-  button, .button {
+  button.button {
     padding: 10px 16px;
     background: black;
     color: white;
@@ -23,14 +23,39 @@
     height: 4px;
     border-radius: 30px;
   }
+
+  .spinning-loader {
+    border-top-color: white;
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+  }
+
+  @-webkit-keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
 }
 
 html, body {
   padding-bottom: 72px;
 }
 
-input {
+input, textarea {
   border: 1px solid #E3E3E3;
-  padding: 10px 16px;
+  padding: 0.5rem 16px;
   border-radius: 4px
 }

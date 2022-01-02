@@ -1,18 +1,19 @@
 import imageToBase64 from 'image-to-base64/browser';
 import { decode } from 'base64-arraybuffer'
+import { supabase } from '.';
 
-export const addSneakerToDb = async ({ sneaker, setSneakerToAddData, setShowAddSneakerModal}) => {
+export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, setAddSneakerModalStep}) => {
   let brandId
   let silhouetteId
   let modelId
   let savedThumbnailPath
-  console.log({ sneaker })
-  const brandName = sneaker.brand?.trim().toLowerCase()
-  const silhouette = sneaker.silhoutte?.trim().toLowerCase()
-  const modelName = sneaker.shoeName
-  const sku = sneaker.styleID
-  const sneakerColours = sneaker.colorway
-  const colourway = sneaker.shoeName.replace(sneaker.silhoutte, "").trim()
+  const { stockXSneakerData } = sneakerToAddData;
+  const brandName = stockXSneakerData.brand?.trim().toLowerCase()
+  const silhouette = stockXSneakerData.silhoutte?.trim().toLowerCase()
+  const modelName = stockXSneakerData.shoeName
+  const sku = stockXSneakerData.styleID
+  const sneakerColours = stockXSneakerData.colorway
+  const colourway = stockXSneakerData.shoeName.replace(stockXSneakerData.silhoutte, "").trim()
   // See if brand exists by checking brand (brand name, lower cased)
   const { data: brandInDb, error: brandInDbError } = await supabase
     .from('brands')
@@ -81,7 +82,7 @@ export const addSneakerToDb = async ({ sneaker, setSneakerToAddData, setShowAddS
     // if sneaker model doesn't exist yet, add to sneaker_models db
     console.log("model doesn't exist yet, adding model to db")
     // Download thumbnail image from stockX
-    const thumbnailBase64 = await imageToBase64(sneaker.thumbnail).catch(error => { return console.error(error) })
+    const thumbnailBase64 = await imageToBase64(stockXSneakerData.thumbnail).catch(error => { return console.error(error) })
     // Upload to our db
     const { data: thumbnailData, error: thumbnailError } = await supabase
       .storage
@@ -131,10 +132,11 @@ export const addSneakerToDb = async ({ sneaker, setSneakerToAddData, setShowAddS
     }
     const savedThumbnailUrl = publicThumbnailUrl.publicURL
 
-    setSneakerToAddData({ brandId, silhouetteId, modelId, savedThumbnailUrl: savedThumbnailUrl, silhouetteName: silhouette, colourwayName: colourway, brandName, customName: modelName, wearInRain: false })
-    setShowAddSneakerModal(true)
+    setSneakerToAddData({ stockXSneakerData, brandId, silhouetteId, modelId, savedThumbnailUrl: savedThumbnailUrl, silhouetteName: silhouette, colourwayName: colourway, brandName, customName: modelName, wearInRain: false })
+    setAddSneakerModalStep("details")
   } else {
     // else, tell them it already exists
     console.log("sneaker already exists!")
+    setAddSneakerModalStep("exists")
   }
 }
