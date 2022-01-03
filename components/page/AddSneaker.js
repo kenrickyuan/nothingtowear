@@ -55,6 +55,18 @@ export default function AddSneaker({ session }) {
   const handleFormSubmit = async e => {
     e.preventDefault()
     if (addSneakerModalStep === "details") {
+      // check one more time if the sneaker is already in user's collection
+      const { data: existingSneaker, error: existingSneakerError } = await supabase
+        .from('user_sneakers')
+        .select('id')
+        .eq('sneaker_model_id', sneakerToAddData.modelId)
+      if (existingSneakerError) {
+        return console.error(existingSneakerError)
+      }
+      if (existingSneaker.length !== 0) {
+        console.log("sneaker already exists!")
+        setAddSneakerModalStep("exists")
+      }
       const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
         .from('user_sneakers')
         .insert([
