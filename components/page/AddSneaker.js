@@ -31,6 +31,7 @@ export default function AddSneaker({ session }) {
     setStockXSneakersList([])
     setLoading(true)
     const result = await searchSneakers(sneakerQuery)
+    console.log(result)
     setStockXSneakersList(result)
     setLoading(false)
   }
