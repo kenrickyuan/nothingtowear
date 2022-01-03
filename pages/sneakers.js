@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils'
 import Auth from '../components/account/Auth'
-import Sneakers from '../components/Page/Sneakers'
+import Sneakers from '../components/page/Sneakers'
 
 export default function SneakersPage() {
   const [session, setSession] = useState(null)
