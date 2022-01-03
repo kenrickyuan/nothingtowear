@@ -194,7 +194,7 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
+          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
           {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
         </div>
         <div className='flex flex-col items-center justify-center pb-6 px-4'>
@@ -280,7 +280,7 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
+          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
           {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
         </div>
         <div className='border-t-[1px] border-lightGrey p-4'>
@@ -335,7 +335,7 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
+          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
           {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
         </div>
         <div className='border-t-[1px] border-lightGrey p-4 h-[calc(100vh-15rem)] overflow-y-scroll pb-[82px]'>
