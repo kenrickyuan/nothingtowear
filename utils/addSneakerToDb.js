@@ -8,10 +8,12 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
   let modelId
   let savedThumbnailPath
   const { stockXSneakerData } = sneakerToAddData;
+  console.log(stockXSneakerData)
   const brandName = stockXSneakerData.brand?.trim().toLowerCase()
   const silhouette = stockXSneakerData.silhoutte?.trim().toLowerCase()
   const modelName = stockXSneakerData.shoeName
   const sku = stockXSneakerData.styleID
+  const releaseDate = stockXSneakerData.releaseDate
   const colourway = stockXSneakerData.colorway
   const colourwayName = stockXSneakerData.shoeName.replace(stockXSneakerData.silhoutte, "").trim()
   // See if brand exists by checking brand (brand name, lower cased)
@@ -99,7 +101,7 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     const { data: newModelInDb, error: newModelInDbError } = await supabase
       .from('sneaker_models')
       .insert([
-        { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colourway, colourway_name: colourwayName, thumbnail_url: thumbnailUrl },
+        { name: modelName, sku: sku, sneaker_silhouette_id: silhouetteId, colourway, colourway_name: colourwayName, thumbnail_url: thumbnailUrl, release_date: releaseDate},
       ])
     if (newModelInDbError) {
       console.error(newModelInDbError)
