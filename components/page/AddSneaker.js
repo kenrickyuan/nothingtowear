@@ -79,6 +79,7 @@ export default function AddSneaker({ session }) {
       setShowAddSneakerModal(false)
       setSneakerToAddData({})
       setAddSneakerModalStep("")
+      setSelectedSneakerColours([])
     } else {
       handleAddSneakerToDbClick(e)
     }
