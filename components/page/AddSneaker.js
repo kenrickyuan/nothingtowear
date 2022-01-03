@@ -26,6 +26,7 @@ export default function AddSneaker({ session }) {
   const handleSearchSubmit = async e => {
     console.log('search submitted')
     e.preventDefault()
+    searchInputRef.current.blur()
     window.scrollTo(0, 0)
     setStockXSneakersList([])
     setLoading(true)
