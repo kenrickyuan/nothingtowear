@@ -138,7 +138,7 @@ export default function Sneakers({ session }) {
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Location Notes</p>
-              <p className='font-semibold capitalize'>{activeSneaker?.location}</p>
+              <p className='font-semibold capitalize'>{activeSneaker?.location || "No location notes"}</p>
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Can Wear</p>
@@ -164,11 +164,11 @@ export default function Sneakers({ session }) {
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Colourway</p>
-              <p className='font-semibold'>{activeSneaker?.sneaker_models?.colourway}</p>
+              <p className='font-semibold'>{activeSneaker?.sneaker_models?.colourway || "N/A"}</p>
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>SKU</p>
-              <p className='font-semibold'>{activeSneaker?.sneaker_models?.sku}</p>
+              <p className='font-semibold'>{activeSneaker?.sneaker_models?.sku || "N/A"}</p>
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Release Date</p>
