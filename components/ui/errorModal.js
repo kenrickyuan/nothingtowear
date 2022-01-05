@@ -11,13 +11,14 @@ export const ErrorModal = () => {
       }}>
       </div>
       <div className={`fixed flex items-center justify-center z-[999] inset-0 pointer-events-none`}>
-        <div className={`${displayErrorModal ? "scale-100 pointer-events-auto" : "scale-0 pointer-events-none"} transition-transform duration-[400ms] relative flex items-center justify-center bg-white rounded-3xl p-4 w-[min(75vw,300px)] min-h-[min(75vw,300px)]`}>
+        <div className={`${displayErrorModal ? "scale-100 pointer-events-auto" : "scale-0 pointer-events-none"} transition-transform duration-[400ms] relative flex flex-col items-center justify-center bg-white rounded-3xl p-4 w-[min(75vw,300px)] min-h-[min(75vw,300px)]`}>
           <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
             e.preventDefault()
             closeErrorModal()
           }}>
             <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
           </button>
+          <h2 className="text-xl font-semibold">Error:</h2>
           <p>{errorModalMessage}</p> 
         </div>
       </div>

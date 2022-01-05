@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
-import { searchSneakers, supabase, addSneakerToDb, addUserColour, getUserColours } from '../../utils';
+import { searchSneakers, supabase, addSneakerToDb, addUserSneaker, addUserColour, getUserColours } from '../../utils';
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { useUI } from "../../hooks"
+import { SpinningLoader } from "../ui/spinningLoader"
 
 export default function AddSneaker({ session }) {
   const { openErrorModal, closeErrorModal, displayErrorModal } = useUI()
@@ -57,43 +58,16 @@ export default function AddSneaker({ session }) {
   const handleFormSubmit = async e => {
     e.preventDefault()
     if (addSneakerModalStep === "details") {
-      // check one more time if the sneaker is already in user's collection
-      const { data: existingSneaker, error: existingSneakerError } = await supabase
-        .from('user_sneakers')
-        .select('id')
-        .eq('sneaker_model_id', sneakerToAddData.modelId)
-      if (existingSneakerError) {
-        return console.error(existingSneakerError)
-      }
-      if (existingSneaker.length !== 0) {
-        console.log("sneaker already exists!")
-        setAddSneakerModalStep("exists")
-      }
-      const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
-        .from('user_sneakers')
-        .insert([
-          { custom_name: sneakerToAddData.customName, location: sneakerToAddData.location, wear_in_rain: sneakerToAddData.wearInRain, profile_id: session.user.id, sneaker_model_id: sneakerToAddData.modelId },
-        ])
-      if (newUserSneakerInDbError) {
-        return console.error(newUserSneakerInDbError)
-      }
-      const addSneakerColourJoin = async (colour) => {
-        const { data: newSneakerColourJoin, error: newSneakerColourJoinError } = await supabase
-          .from('user_sneaker_user_colour')
-          .insert([
-            { user_sneaker_id: newUserSneakerInDb[0].id, user_colour_id: colour.id, profile_id: session.user.id },
-          ])
-        if (newSneakerColourJoinError) {
-          return console.error(newSneakerColourJoinError)
-        }
-        return newSneakerColourJoin
-      }
-      // create user_sneaker_user_colour join table entries
-      await Promise.all(sneakerToAddData.sneakerColours.map(addSneakerColourJoin))
+      setAddToDbLoading(true);
+      await addUserSneaker({ sneakerToAddData, setAddSneakerModalStep, profileId: session.user.id, openErrorModal });
       setShowAddSneakerModal(false)
-      setSneakerToAddData({})
-      setAddSneakerModalStep("")
-      setSelectedSneakerColours([])
+      setAddToDbLoading(false);
+      setTimeout(() => {
+        console.log('resetting data')
+        setSneakerToAddData({})
+        setAddSneakerModalStep("")
+        setSelectedSneakerColours([])
+      }, 1000)
     } else {
       handleAddSneakerToDbClick(e)
     }
@@ -156,7 +130,7 @@ export default function AddSneaker({ session }) {
     <div className='mt-[79px]'>
       <div className={`${loading ? "flex" : "hidden"} fixed inset-0 justify-center items-center bg-black opacity-50 z-40`}>
         <div className="flex justify-center items-center">
-          <div className="spinning-loader ease-linear rounded-full border-4 border-t-4 border-red h-12 w-12 mb-4"></div>
+          <SpinningLoader big />
         </div>
       </div>
       <header className='fixed top-0 left-0 right-0 z-10 bg-white'>
@@ -194,8 +168,7 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
-          {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
+          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
         <div className='flex flex-col items-center justify-center pb-6 px-4'>
           <h4 className='text-grey text-lg text-center'>{stockXSneakerData?.silhoutte}</h4>
@@ -262,8 +235,8 @@ export default function AddSneaker({ session }) {
               </div>
             ) : null }
         </div>
-        <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
-          {addToDbLoading ? "adding..." : addSneakerModalStep === "" ? "Add To Collection" : "Save"}
+        <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} ${addToDbLoading && "h-[50px] pointer-events-none"} bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
+          {addToDbLoading ? <SpinningLoader /> : addSneakerModalStep === "" ? "Add To Collection" : "Save"}
         </button>
       </div>
       {/* Sneaker colour edit modal overlay */}
@@ -280,11 +253,10 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
-          {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
+          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
-        <div className='h-[calc(100vh-13rem)] overflow-y-scroll pb-[82px]'>
-          <div className='border-t-[1px] border-lightGrey p-4'>
+        <div className='h-[calc(100vh-13rem)] overflow-y-scroll pb-[182px] border-t-[1px] border-lightGrey'>
+          <div className='p-4'>
             <p className='font-semibold mb-2'>Selected</p>
             <div className='grid grid-cols-2 gap-y-4 min-h-[40px]'>
               {selectedSneakerColours.length === 0 ? (
@@ -301,7 +273,7 @@ export default function AddSneaker({ session }) {
           </div>
           <div className='border-t-[1px] border-lightGrey p-4'>
             <div className='grid grid-cols-2 gap-y-4'>
-              {userColours.filter(userColour => selectedSneakerColours.every(selectedColour => selectedColour.id !== userColour.id)).sort((a, b) => a.name.localeCompare(b.name)).map(colour => (
+              {userColours?.filter(userColour => selectedSneakerColours.every(selectedColour => selectedColour.id !== userColour.id)).sort((a, b) => a.name.localeCompare(b.name)).map(colour => (
                 <button type="button" key={colour.id} className='flex items-center pointer-events-none' onClick={() => handleAddSelectedColour(colour)}>
                   <div className='pointer-events-auto w-10 h-10 rounded-full mr-4 border-[1px] border-lightGrey' style={{backgroundColor:`#${colour.hexcode}`}}></div>
                   <p className='pointer-events-auto capitalize'>{colour.name}</p>
@@ -337,8 +309,7 @@ export default function AddSneaker({ session }) {
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <img src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
-          {/* <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" /> */}
+          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
         <div className='border-t-[1px] border-lightGrey p-4 h-[calc(100vh-15rem)] overflow-y-scroll pb-[82px]'>
           <HexColorPicker color={newColourHex} onChange={setNewColourHex} />
@@ -350,8 +321,8 @@ export default function AddSneaker({ session }) {
           </div>
           <input className='mx-auto block mt-4' type="text" placeholder='*Name your colour' onKeyDown={e => handleColourNameInputKeyDown(e)} value={newColourName} onChange={e => setNewColourName(e.target.value)}></input>
         </div>
-        <button disabled={newColourName === ""} className={`disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
-          {addUserColourLoading ? "adding colour..." : "Add Colour"}
+        <button disabled={newColourName === ""} className={`${addUserColourLoading && "flex justify-center items-center h-[50px]"} disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
+          {addUserColourLoading ? <SpinningLoader /> : "Add Colour"}
         </button>
       </div>
 
@@ -359,8 +330,7 @@ export default function AddSneaker({ session }) {
         {stockXSneakersList?.map(stockXSneaker => (
           <li key={stockXSneaker._id} className='grid grid-cols-[7rem_1fr] p-4 gap-4 border-b border-lightGrey' onClick={() => handleStockXSneakerClick(stockXSneaker)}>
             <div className="w-full h-16 relative">
-              <img src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} className='absolute w-full h-full inset-0 object-contain'></img>
-              {/* <Image src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain"/> */}
+              <Image src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain"/>
             </div>
             <div className='flex flex-col justify-center w-[calc(100vw-10rem)]'>
               <p className='text-grey text-sm w-full overflow-hidden whitespace-nowrap text-ellipsis'>{stockXSneaker.silhoutte}</p>
