@@ -100,6 +100,13 @@
 
 body {
   padding-bottom: 88px;
+  /* prevent user select, highlight, touch callout for PWA */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 input, textarea {
