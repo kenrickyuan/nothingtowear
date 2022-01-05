@@ -6,6 +6,8 @@ export default function Account({ session }) {
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState(null)
   const [avatar_url, setAvatarUrl] = useState(null)
+  const [statusMessage, setStatusMessage] = useState("nothing yet")
+  const [newPassword, setNewPassword] = useState("")
 
   useEffect(() => {
     getProfile()
@@ -36,6 +38,7 @@ export default function Account({ session }) {
       setLoading(false)
     }
   }
+  
 
   async function updateProfile({ username, avatar_url }) {
     try {
@@ -60,6 +63,22 @@ export default function Account({ session }) {
       alert(error.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function updatePassword() {
+    try {
+      setStatusMessage("about to update password")
+      const { user, error } = await supabase.auth.update({ password: newPassword })
+
+      if (error) {
+        throw error
+      }
+      console.log(user)
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      setStatusMessage("update password successful!")
     }
   }
 
@@ -102,6 +121,13 @@ export default function Account({ session }) {
           Sign Out
         </button>
       </div>
+
+      <p>
+        {statusMessage}
+      </p>
+      <input autoFocus className='bg-lighterGrey pl-8' type="text" name="newPassword" value={newPassword} onChange={e => setNewPassword(e.target.value)} ></input>
+      <button className='button' onClick={() => updatePassword()}>submit!</button>
+
     </div>
   )
 }
