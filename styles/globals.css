@@ -99,7 +99,7 @@
 
 
 body {
-  padding-bottom: 88px;
+  padding-bottom: 96px;
   /* prevent user select, highlight, touch callout for PWA */
   user-select: none;
   -webkit-user-select: none;
