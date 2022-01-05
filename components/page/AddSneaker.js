@@ -155,7 +155,7 @@ export default function AddSneaker({ session }) {
       </header>
 
       {/* Sneaker to add modal overlay */}
-      <div className={`${showAddSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
+      <div className={`${showAddSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowAddSneakerModal(false)
       }}></div>
@@ -240,7 +240,7 @@ export default function AddSneaker({ session }) {
         </button>
       </div>
       {/* Sneaker colour edit modal overlay */}
-      <div className={`${showEditColoursModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[70] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
+      <div className={`${showEditColoursModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[70] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowEditColoursModal(false)
       }}></div>
@@ -292,7 +292,7 @@ export default function AddSneaker({ session }) {
       </div>
       
       {/* Sneaker colour edit modal overlay */}
-      <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
+      <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowCreateUserColourModal(false)
         setNewColourHex("#397273")

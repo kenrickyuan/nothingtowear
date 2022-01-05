@@ -142,12 +142,12 @@ export default function Sneakers({ session }) {
           })}
         </ul>
       )}
-      {/* Sneaker to add modal overlay */}
-      <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
+      {/* Sneaker view modal overlay */}
+      <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowSneakerModal(false)
       }}></div>
-      {/* Sneaker to add modal */}
+      {/* Sneaker view modal */}
       <div className={`${showSneakerModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
