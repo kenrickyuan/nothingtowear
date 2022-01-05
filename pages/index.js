@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../utils'
 import { useRouter } from 'next/router'
 import Sneakers from '../components/page/Sneakers'
-
+import Reset from '../components/account/Reset'
 
 export default function Index() {
   const router = useRouter()
   const [session, setSession] = useState(null)
+  const [isRecovery, setIsRecovery] = useState(false)
+  const [accessToken, setAccessToken] = useState("")
   const [triedToLogin, setTriedToLogin] = useState(false)
 
   useEffect(() => {
@@ -18,7 +20,11 @@ export default function Index() {
   }, [])
 
   useEffect(() => {
-    if (triedToLogin && !session) {
+    if (router.asPath?.includes("type=recovery")) {
+      const { token } = router.query
+      setIsRecovery(true)
+      setAccessToken(token)
+    } else if (triedToLogin && !session) {
       router.push("/account")
     }
   }, [session, router, triedToLogin])
@@ -26,7 +32,7 @@ export default function Index() {
 
   return (
     <div className="">
-      {session && <Sneakers key={session.user.id} session={session} />}
+      {isRecovery ? <Reset session={session} accessToken={accessToken} /> : session ? <Sneakers key={session.user.id} session={session} /> : null}
     </div>
   )
 }

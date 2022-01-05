@@ -4,11 +4,12 @@ import { supabase } from '../../utils'
 export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogin = async (email) => {
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signIn({ email })
+      const { error } = await supabase.auth.signIn({ email, password })
       if (error) throw error
       alert('Check your email for the login link!')
     } catch (error) {
@@ -30,6 +31,13 @@ export default function Auth() {
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className="inputField"
+            type="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div>
