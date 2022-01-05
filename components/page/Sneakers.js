@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
 import { supabase } from "../../utils/supabaseClient"
 import Image from 'next/image'
+import { SpinningLoader } from '../ui/spinningLoader'
+import Fuse from 'fuse.js'
+
 
 export default function Sneakers({ session }) {
-  const [userSneakers, setUserSneakers] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [queryResult, setQueryResult] = useState([])
+
+  const [userSneakers, setUserSneakers] = useState(false) // Make a difference between empty array (user has no sneakers) vs page init (show skeleton)
   const [isSneakerViewGrid, setIsSneakerViewGrid] = useState(true)
   const [activeSneaker, setActiveSneaker] = useState({})
   const [showSneakerModal, setShowSneakerModal] = useState(false)
@@ -62,11 +68,31 @@ export default function Sneakers({ session }) {
     console.log(userSneakersData)
   }
 
+  const handleChangeViewClick = () => {
+    // window.scrollTo(0, 0)
+    setIsSneakerViewGrid(isSneakerViewGrid => !isSneakerViewGrid)
+  }
+
   const handleSneakerClick = sneaker => {
     setActiveSneaker(sneaker)
     setShowSneakerModal(true)
   }
 
+  useEffect(() => {
+    const options = {
+      includeMatches: true,
+      minMatchCharLength: 2,
+      // threshold: 0.0,
+      keys: [
+        "custom_name",
+      ]
+    };
+
+    const fuse = new Fuse(userSneakers, options);
+
+    setQueryResult(fuse.search(searchQuery))
+  }, [searchQuery])
+  
   useEffect(() => {
     getUserSneakers()
   }, [session])
@@ -78,13 +104,14 @@ export default function Sneakers({ session }) {
   useEffect(() => {
     console.log(activeSneaker)
   }, [activeSneaker])
-  
 
   return (
     <div className="">
       <header className='fixed flex justify-between items-center z-10 top-4 left-4 right-4 bg-lighterGrey rounded-xl p-2'>
         <h1 className='text-2xl font-semibold'>{userSneakers.length}</h1>
-        <button type="button" className='w-10 h-10' onClick={() => setIsSneakerViewGrid(isSneakerViewGrid => !isSneakerViewGrid)}>
+        {/* <input className='grow bg-lighterGrey pl-8' type="text" name="sneakerQuery" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}>
+        </input> */}
+        <button type="button" className='w-10 h-10' onClick={() => handleChangeViewClick()}>
           {isSneakerViewGrid ? (
             <Image src="/grid-view.svg" alt="grid-view" width={40} height={40}/>
           ) : (
@@ -92,9 +119,14 @@ export default function Sneakers({ session }) {
           )}
         </button>
       </header>
-      {userSneakers.length === 0 ? <h1>No user sneakers yet</h1> : (
+      {!userSneakers ? (
+        // Page is initing
+        <div className='flex justify-center items-center mt-[calc(40px+3rem)] h-[calc(100vh-10rem)]'>
+          <SpinningLoader big dark />
+        </div>
+      ) : userSneakers?.length === 0 ? <h1>No user sneakers yet</h1> : (
         <ul className={`${isSneakerViewGrid ? "grid grid-cols-3 px-4 gap-[1px]" : ""} pt-[calc(40px+3rem)]`}>
-          {userSneakers.map(sneaker => {
+            {userSneakers.map((sneaker) => {
             const { publicThumbnailUrl, sneaker_model_id: sneakerModelId, sneaker_models: sneakerModel } = sneaker;
             return (
               <li key={sneakerModelId} className={`${isSneakerViewGrid ? "grid-shadow flex justify-center items-center" : "grid grid-cols-[7rem_1fr] p-4 gap-4 border-t border-lightGrey"}`} onClick={() => handleSneakerClick(sneaker)}>
