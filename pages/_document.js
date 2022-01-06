@@ -43,7 +43,15 @@ class MyDocument extends Document {
           <meta property='og:url' content='https://ihavetoomanyshoes.com' />
           <meta property='og:image' content='https://ihavetoomanyshoes.com/icons/apple-touch-icon.png' />
 
-          <link href="/splashscreens/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+          <link rel='apple-touch-startup-image' href='/splashscreens/ipadpro2_splash.png' sizes='2048x2732' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/ipadpro1_splash.png' sizes='1668x2224' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/ipad_splash.png' sizes='1536x2048' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/iphonex_splash.png' sizes='1125x2436' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/iphoneplus_splash.png' sizes='1242x2208' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/iphone6_splash.png' sizes='750x1334' />
+          <link rel='apple-touch-startup-image' href='/splashscreens/iphone5_splash.png' sizes='640x1136' />
+
+          {/* <link href="/splashscreens/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
           <link href="/splashscreens/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
           <link href="/splashscreens/iphoneplus_splash.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
           <link href="/splashscreens/iphonex_splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
@@ -52,7 +60,7 @@ class MyDocument extends Document {
           <link href="/splashscreens/ipad_splash.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
           <link href="/splashscreens/ipadpro1_splash.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
           <link href="/splashscreens/ipadpro3_splash.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
-          <link href="/splashscreens/ipadpro2_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+          <link href="/splashscreens/ipadpro2_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" /> */}
         </Head>
         <body>
           <Main />
