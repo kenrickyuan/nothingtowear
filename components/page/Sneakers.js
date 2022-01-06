@@ -3,7 +3,6 @@ import { supabase } from "../../utils/supabaseClient"
 import Image from 'next/image'
 import { SpinningLoader } from '../ui/spinningLoader'
 import Fuse from 'fuse.js'
-import { parseBody } from 'next/dist/server/api-utils'
 
 
 export default function Sneakers({ session }) {
@@ -77,7 +76,6 @@ export default function Sneakers({ session }) {
   const handleSneakerClick = sneaker => {
     setActiveSneaker(sneaker)
     setShowSneakerModal(true)
-    document.body.classList.toggle("no-scroll")
   }
 
   useEffect(() => {
@@ -148,7 +146,7 @@ export default function Sneakers({ session }) {
       <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowSneakerModal(false)
-        document.body.classList.toggle("no-scroll")
+  
 
       }}></div>
       {/* Sneaker view modal */}
@@ -156,7 +154,7 @@ export default function Sneakers({ session }) {
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
           setShowSneakerModal(false)
-          document.body.classList.toggle("no-scroll")
+    
         }}>
           <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>

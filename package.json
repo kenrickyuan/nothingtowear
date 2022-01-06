@@ -18,7 +18,6 @@
     "react": "17.0.2",
     "react-colorful": "^5.5.1",
     "react-dom": "17.0.2",
-    "scroll-padlock": "^2.0.0",
     "sneaks-api": "^1.2.3"
   },
   "devDependencies": {
