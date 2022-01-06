@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import { Layout } from "../components/ui/layout"
 import { UIProvider } from "../contexts/index"
-
+import ScrollPadlock from "scroll-padlock/dist/es/scroll-padlock.js";
 
 function MyApp({ Component, pageProps }) {
   // const { global } = pageProps
@@ -15,4 +15,5 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
+void new ScrollPadlock(document.body, "no-scroll");
 export default MyApp
