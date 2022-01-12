@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from "../../utils/supabaseClient"
 import Image from 'next/image'
 import { SpinningLoader } from '../ui/spinningLoader'
 import Fuse from 'fuse.js'
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 
 
 export default function Sneakers({ session }) {
@@ -13,6 +14,8 @@ export default function Sneakers({ session }) {
   const [isSneakerViewGrid, setIsSneakerViewGrid] = useState(true)
   const [activeSneaker, setActiveSneaker] = useState({})
   const [showSneakerModal, setShowSneakerModal] = useState(false)
+  const modalRef = useRef(null) 
+
   const getUserSneakers = async () => {
     let { data: userSneakersData, error } = await supabase
       .from('user_sneakers')
@@ -76,6 +79,7 @@ export default function Sneakers({ session }) {
   const handleSneakerClick = sneaker => {
     setActiveSneaker(sneaker)
     setShowSneakerModal(true)
+    disableBodyScroll(modalRef.current)
   }
 
   useEffect(() => {
@@ -146,15 +150,14 @@ export default function Sneakers({ session }) {
       <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowSneakerModal(false)
-
-
+        enableBodyScroll(modalRef.current)
       }}></div>
       {/* Sneaker view modal */}
-      <div className={`${showSneakerModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
+      <div ref={modalRef} className={`${showSneakerModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
           setShowSneakerModal(false)
-
+          enableBodyScroll(modalRef.current)
         }}>
           <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>

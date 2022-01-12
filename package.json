@@ -11,6 +11,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^1.28.5",
     "base64-arraybuffer": "^1.0.1",
+    "body-scroll-lock": "^4.0.0-beta.0",
     "fuse.js": "^6.5.3",
     "image-to-base64": "^2.2.0",
     "next": "12.0.6",
