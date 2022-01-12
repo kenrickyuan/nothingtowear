@@ -168,7 +168,7 @@ export default function Sneakers({ session }) {
           <h4 className='text-grey text-lg text-center capitalize'>{activeSneaker?.sneaker_models?.sneaker_silhouettes?.name}</h4>
           <h3 className='font-semibold text-xl text-center overflow-hidden text-ellipsis whitespace-nowrap w-[calc(100vw-1rem)]'>{activeSneaker?.sneaker_models?.colourway_name}</h3>
         </div>
-        <div ref={scrollableDetailsRef} className='h-[calc(100vh-256px)] overflow-y-scroll'>
+        <div ref={scrollableDetailsRef} className='h-[calc(100vh-256px)] overflow-y-scroll pb-4'>
           <div className='p-4'>
             <p className='text-grey text-xs'>Nickname</p>
             <p className='font-semibold capitalize'>{activeSneaker?.custom_name}</p>
