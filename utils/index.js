@@ -1,5 +1,7 @@
 export * from "./searchSneakers"
 export * from "./getUserColours"
+export * from "./getSneakerColours"
+export * from "./deleteSneaker"
 export * from "./addUserSneaker"
 export * from "./addUserColour"
 export * from "./addSneakerToDb"

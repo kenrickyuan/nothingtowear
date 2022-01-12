@@ -7,7 +7,8 @@ module.exports = {
       lightGrey: '#E3E3E3',
       lighterGrey: '#F3F3F3',
       grey: '#787878',
-      green: '#06aa6d'
+      green: '#06aa6d',
+      deleteRed: '#fb3d4c'
     },
     extend: {},
   },

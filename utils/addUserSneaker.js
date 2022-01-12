@@ -36,5 +36,7 @@ export const addUserSneaker = async ({ sneakerToAddData, setAddSneakerModalStep,
     return newSneakerColourJoin
   }
   // create user_sneaker_user_colour join table entries
-  await Promise.all(sneakerToAddData.sneakerColours.map(addSneakerColourJoin))
+  if (sneakerToAddData.sneakerColours) {
+    await Promise.all(sneakerToAddData.sneakerColours.map(addSneakerColourJoin))
+  }
 }

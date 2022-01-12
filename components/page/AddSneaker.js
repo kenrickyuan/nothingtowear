@@ -127,7 +127,7 @@ export default function AddSneaker({ session }) {
   }, [userColours])
 
   return (
-    <div className='mt-[79px]'>
+    <div className='mt-[75px]'>
       <div className={`${loading ? "flex" : "hidden"} fixed inset-0 justify-center items-center bg-black opacity-50 z-40`}>
         <div className="flex justify-center items-center">
           <SpinningLoader big />
@@ -135,7 +135,7 @@ export default function AddSneaker({ session }) {
       </div>
       <header className='fixed top-0 left-0 right-0 z-10 bg-white'>
         <form className='flex p-4 gap-4 border-b border-lightGrey' onSubmit={e => handleSearchSubmit(e)}>
-          <input autoFocus ref={searchInputRef} className='grow bg-lighterGrey pl-8' type="text" name="sneakerQuery" value={sneakerQuery} onChange={e => setSneakerQuery(e.target.value)}>
+          <input ref={searchInputRef} className='grow bg-lighterGrey pl-8' type="text" name="sneakerQuery" value={sneakerQuery} onChange={e => setSneakerQuery(e.target.value)}>
           </input>
           <div className='absolute left-6 top-[27px] pointer-events-none flex items-center'>
             <Image unoptimized src="/search.svg" height={20} width={20} alt="Magnifying glass" />
@@ -155,7 +155,7 @@ export default function AddSneaker({ session }) {
       </header>
 
       {/* Sneaker to add modal overlay */}
-      <div className={`${showAddSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
+      <div className={`${showAddSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
         e.preventDefault()
         setShowAddSneakerModal(false)
       }}></div>
@@ -170,14 +170,14 @@ export default function AddSneaker({ session }) {
         <div className="w-full h-32 mt-4 relative pointer-events-none">
           <Image unoptimized src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
-        <div className='flex flex-col items-center justify-center pb-6 px-4'>
+        <div className='flex flex-col items-center justify-center pb-6 px-4 border-b-[1px] border-lightGrey'>
           <h4 className='text-grey text-lg text-center'>{stockXSneakerData?.silhoutte}</h4>
           <h3 className='font-semibold text-xl text-center'>{stockXSneakerData?.shoeName.replace(stockXSneakerData?.silhoutte, "").trim()}</h3>
         </div>
         <div className='h-[calc(100vh-256px)] overflow-y-scroll pb-[82px]'>
           {addSneakerModalStep === "" ? (
             <>
-              <div className='border-t-[1px] border-lightGrey p-4'>
+              <div className='p-4'>
                 <p className='text-grey text-xs'>Brand</p>
                 <p className='font-semibold'>{stockXSneakerData?.brand}</p>
               </div>
@@ -196,7 +196,7 @@ export default function AddSneaker({ session }) {
             </>
           ) : addSneakerModalStep === "details" ? (
             <>
-              <div className='border-t-[1px] border-lightGrey p-4'>
+              <div className='p-4'>
                 <p className='text-grey text-xs'>Nickname</p>
                 <input className='w-full mt-2 font-semibold' type="text" name="name" value={sneakerToAddData.customName} onChange={e => setSneakerToAddData({ ...sneakerToAddData, customName: e.target.value })} />
               </div>
@@ -235,12 +235,12 @@ export default function AddSneaker({ session }) {
             </div>
           ) : null}
         </div>
-        <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} ${addToDbLoading && "h-[50px] pointer-events-none"} bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
+        <button disabled={addToDbLoading} className={`${addSneakerModalStep === "exists" ? "hidden" : ""} ${addToDbLoading && "h-[50px] pointer-events-none"} bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
           {addToDbLoading ? <SpinningLoader /> : addSneakerModalStep === "" ? "Add To Collection" : "Save"}
         </button>
       </div>
       {/* Sneaker colour edit modal overlay */}
-      <div className={`${showEditColoursModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[70] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
+      <div className={`${showEditColoursModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[70] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
         e.preventDefault()
         setShowEditColoursModal(false)
       }}></div>
@@ -292,7 +292,7 @@ export default function AddSneaker({ session }) {
       </div>
 
       {/* Sneaker colour edit modal overlay */}
-      <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
+      <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onClick={e => {
         e.preventDefault()
         setShowCreateUserColourModal(false)
         setNewColourHex("#397273")
@@ -321,24 +321,30 @@ export default function AddSneaker({ session }) {
           </div>
           <input className='mx-auto block mt-4' type="text" placeholder='*Name your colour' onKeyDown={e => handleColourNameInputKeyDown(e)} value={newColourName} onChange={e => setNewColourName(e.target.value)}></input>
         </div>
-        <button disabled={newColourName === ""} className={`${addUserColourLoading && "flex justify-center items-center h-[50px]"} disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
+        <button disabled={newColourName === "" || addUserColourLoading} className={`${addUserColourLoading && "flex justify-center items-center h-[50px]"} disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
           {addUserColourLoading ? <SpinningLoader /> : "Add Colour"}
         </button>
       </div>
-
-      <ul>
-        {stockXSneakersList?.map(stockXSneaker => (
-          <li key={stockXSneaker._id} className='grid grid-cols-[7rem_1fr] p-4 gap-4 border-b border-lightGrey' onClick={() => handleStockXSneakerClick(stockXSneaker)}>
-            <div className="w-full h-16 relative">
-              <Image unoptimized src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain" />
-            </div>
-            <div className='flex flex-col justify-center w-[calc(100vw-10rem)]'>
-              <p className='text-grey text-sm w-full overflow-hidden whitespace-nowrap text-ellipsis'>{stockXSneaker.silhoutte}</p>
-              <p className='font-semibold'>{stockXSneaker.shoeName.replace(stockXSneaker.silhoutte, "").trim()}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      
+      {
+        stockXSneakersList.length === 0 ?
+          <div className='flex justify-center items-center h-[calc(100vh-155px)] text-center px-4 text-grey'>
+            Search the StockX database using the sneaker name or SKU
+          </div> : 
+          <ul>
+            {stockXSneakersList?.map(stockXSneaker => (
+              <li key={stockXSneaker._id} className='grid grid-cols-[7rem_1fr] p-4 gap-4 border-b border-lightGrey' onClick={() => handleStockXSneakerClick(stockXSneaker)}>
+                <div className="w-full h-16 relative">
+                  <Image unoptimized src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain" />
+                </div>
+                <div className='flex flex-col justify-center w-[calc(100vw-10rem)]'>
+                  <p className='text-grey text-sm w-full overflow-hidden whitespace-nowrap text-ellipsis'>{stockXSneaker.silhoutte}</p>
+                  <p className='font-semibold'>{stockXSneaker.shoeName.replace(stockXSneaker.silhoutte, "").trim()}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+      }
     </div>
   )
 }
