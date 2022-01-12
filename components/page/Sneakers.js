@@ -67,7 +67,7 @@ export default function Sneakers({ session }) {
       }
       return { ...sneaker, colourData }
     }))
-    setUserSneakers(userSneakersData)
+    setUserSneakers(userSneakersData.reverse())
     console.log(userSneakersData)
   }
 
