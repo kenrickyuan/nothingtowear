@@ -16,10 +16,10 @@ export const ErrorModal = () => {
             e.preventDefault()
             closeErrorModal()
           }}>
-            <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
+            <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
           </button>
           <h2 className="text-xl font-semibold">Error:</h2>
-          <p>{errorModalMessage}</p> 
+          <p>{errorModalMessage}</p>
         </div>
       </div>
     </>

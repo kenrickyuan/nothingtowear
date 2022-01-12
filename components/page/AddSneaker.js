@@ -41,7 +41,7 @@ export default function AddSneaker({ session }) {
     // if the saved state's sneaker is different to the clicked one
     if (stockXSneakerData?._id !== sneakerToAddData?.stockXSneakerData?._id) {
       // setSneakerToAddData
-      setSneakerToAddData({stockXSneakerData})
+      setSneakerToAddData({ stockXSneakerData })
       // open SneakerToAddModal
       setAddSneakerModalStep("")
     }
@@ -111,10 +111,10 @@ export default function AddSneaker({ session }) {
   }
 
   const handleSaveSneakerColoursClick = () => {
-    setSneakerToAddData({...sneakerToAddData, sneakerColours: selectedSneakerColours})
+    setSneakerToAddData({ ...sneakerToAddData, sneakerColours: selectedSneakerColours })
     setShowEditColoursModal(false)
   }
-  
+
   useEffect(() => {
     (async () => {
       const fetchedUserColours = await getUserColours()
@@ -138,9 +138,9 @@ export default function AddSneaker({ session }) {
           <input autoFocus ref={searchInputRef} className='grow bg-lighterGrey pl-8' type="text" name="sneakerQuery" value={sneakerQuery} onChange={e => setSneakerQuery(e.target.value)}>
           </input>
           <div className='absolute left-6 top-[27px] pointer-events-none flex items-center'>
-            <Image src="/search.svg" height={20} width={20} alt="Magnifying glass" />
+            <Image unoptimized src="/search.svg" height={20} width={20} alt="Magnifying glass" />
           </div>
-          <button type='button' className={`${sneakerQuery !== "" ? "flex" : "hidden"} absolute items-center right-4 top-4 py-[11px] px-[10px]`} 
+          <button type='button' className={`${sneakerQuery !== "" ? "flex" : "hidden"} absolute items-center right-4 top-4 py-[11px] px-[10px]`}
             onClick={e => {
               console.log('clear button clicked')
               e.preventDefault();
@@ -148,8 +148,8 @@ export default function AddSneaker({ session }) {
               setStockXSneakersList([]);
               searchInputRef.current.focus()
             }
-          }>
-            <Image src="/cross-cancel.svg" height={20} width={20} alt="Clear search button" />
+            }>
+            <Image unoptimized src="/cross-cancel.svg" height={20} width={20} alt="Clear search button" />
           </button>
         </form>
       </header>
@@ -165,10 +165,10 @@ export default function AddSneaker({ session }) {
           e.preventDefault()
           setShowAddSneakerModal(false)
         }}>
-          <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
+          <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
+          <Image unoptimized src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
         <div className='flex flex-col items-center justify-center pb-6 px-4'>
           <h4 className='text-grey text-lg text-center'>{stockXSneakerData?.silhoutte}</h4>
@@ -207,12 +207,12 @@ export default function AddSneaker({ session }) {
               <div className='border-t-[1px] border-lightGrey p-4'>
                 <p className='text-grey text-xs'>Can Wear</p>
                 <input className="hidden peer" id="wearInRain" type="checkbox" name="wearInRain" checked={sneakerToAddData.wearInRain} onChange={e => setSneakerToAddData({ ...sneakerToAddData, wearInRain: !sneakerToAddData.wearInRain })} />
-                  <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
-                    {sneakerToAddData.wearInRain ? "Even in the rain" : "Only on sunny days"}
-                    <div className={`${sneakerToAddData.wearInRain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute left-0 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
-                    <div className={`${sneakerToAddData.wearInRain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute left-0 transition-transform w-[1px] h-2 bg-white`}></div>
-                    <div className={`${sneakerToAddData.wearInRain ? "translate-x-[13px] translate-y-[-6px]" : "translate-x-[13px] translate-y-[-20px]"} absolute left-0 transition-transform duration-250 w-[1px] h-2 bg-white`}></div>
-                  </label>
+                <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
+                  {sneakerToAddData.wearInRain ? "Even in the rain" : "Only on sunny days"}
+                  <div className={`${sneakerToAddData.wearInRain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute left-0 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
+                  <div className={`${sneakerToAddData.wearInRain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute left-0 transition-transform w-[1px] h-2 bg-white`}></div>
+                  <div className={`${sneakerToAddData.wearInRain ? "translate-x-[13px] translate-y-[-6px]" : "translate-x-[13px] translate-y-[-20px]"} absolute left-0 transition-transform duration-250 w-[1px] h-2 bg-white`}></div>
+                </label>
               </div>
               <div className='border-t-[1px] border-lightGrey p-4'>
                 <p className='text-grey text-xs'>Colours</p>
@@ -220,8 +220,8 @@ export default function AddSneaker({ session }) {
                   {sneakerToAddData?.sneakerColours?.map(colour => (
                     <div key={colour.id} className='w-[30px] h-[30px] m-auto rounded-full border-[1px] border-lightGrey' style={{ backgroundColor: `#${colour.hexcode}` }}></div>
                   ))}
-                    <button type='button' className='relative w-[30px] h-[30px] m-auto bg-lightGrey rounded-full flex items-center justify-center pointer-events-none' onClick={() => setShowEditColoursModal(true)}>
-                    <Image className='pointer-events-auto' src="/pencil.svg" height={14} width={14} alt="Edit colours" />
+                  <button type='button' className='relative w-[30px] h-[30px] m-auto bg-lightGrey rounded-full flex items-center justify-center pointer-events-none' onClick={() => setShowEditColoursModal(true)}>
+                    <Image unoptimized className='pointer-events-auto' src="/pencil.svg" height={14} width={14} alt="Edit colours" />
                     {(!sneakerToAddData?.sneakerColours || sneakerToAddData?.sneakerColours?.length === 0) && (
                       <p className='absolute left-full ml-2 whitespace-nowrap text-grey pointer-events-auto'>Add colours</p>
                     )}
@@ -229,11 +229,11 @@ export default function AddSneaker({ session }) {
                 </div>
               </div>
             </>
-            ) : addSneakerModalStep === "exists" ? (
-              <div className='w-full h-full flex items-center justify-center'>
-                <h1 className='text-xl text-center font-semibold'>You already have this sneaker!</h1>
-              </div>
-            ) : null }
+          ) : addSneakerModalStep === "exists" ? (
+            <div className='w-full h-full flex items-center justify-center'>
+              <h1 className='text-xl text-center font-semibold'>You already have this sneaker!</h1>
+            </div>
+          ) : null}
         </div>
         <button className={`${addSneakerModalStep === "exists" ? "hidden" : ""} ${addToDbLoading && "h-[50px] pointer-events-none"} bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleFormSubmit(e)}>
           {addToDbLoading ? <SpinningLoader /> : addSneakerModalStep === "" ? "Add To Collection" : "Save"}
@@ -250,10 +250,10 @@ export default function AddSneaker({ session }) {
           e.preventDefault()
           setShowEditColoursModal(false)
         }}>
-          <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
+          <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
+          <Image unoptimized src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
         <div className='h-[calc(100vh-13rem)] overflow-y-scroll pb-[182px] border-t-[1px] border-lightGrey'>
           <div className='p-4'>
@@ -275,12 +275,12 @@ export default function AddSneaker({ session }) {
             <div className='grid grid-cols-2 gap-y-4'>
               {userColours?.filter(userColour => selectedSneakerColours.every(selectedColour => selectedColour.id !== userColour.id)).sort((a, b) => a.name.localeCompare(b.name)).map(colour => (
                 <button type="button" key={colour.id} className='flex items-center pointer-events-none' onClick={() => handleAddSelectedColour(colour)}>
-                  <div className='pointer-events-auto w-10 h-10 rounded-full mr-4 border-[1px] border-lightGrey' style={{backgroundColor:`#${colour.hexcode}`}}></div>
+                  <div className='pointer-events-auto w-10 h-10 rounded-full mr-4 border-[1px] border-lightGrey' style={{ backgroundColor: `#${colour.hexcode}` }}></div>
                   <p className='pointer-events-auto capitalize'>{colour.name}</p>
                 </button>
               ))}
               <button type="button" className='relative w-10 h-10 bg-lightGrey rounded-full flex items-center justify-center pointer-events-none col-span-2' onClick={() => setShowCreateUserColourModal(true)}>
-                <Image className='pointer-events-auto' src="/plus.svg" height={20} width={20} alt="Add more colours" />
+                <Image unoptimized className='pointer-events-auto' src="/plus.svg" height={20} width={20} alt="Add more colours" />
                 <p className='absolute left-full ml-2 whitespace-nowrap text-grey pointer-events-auto'>Create a new colour</p>
               </button>
             </div>
@@ -290,7 +290,7 @@ export default function AddSneaker({ session }) {
           Save Colours
         </button>
       </div>
-      
+
       {/* Sneaker colour edit modal overlay */}
       <div className={`${showCreateUserColourModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[80] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
@@ -306,15 +306,15 @@ export default function AddSneaker({ session }) {
           setNewColourHex("#397273")
           setNewColourName("")
         }}>
-          <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
+          <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <Image src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
+          <Image unoptimized src={stockXSneakerData?.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneakerData?.stockXSneakerData?.shoeName} layout="fill" objectFit="contain" />
         </div>
         <div className='border-t-[1px] border-lightGrey p-4 h-[calc(100vh-15rem)] overflow-y-scroll pb-[82px]'>
           <HexColorPicker color={newColourHex} onChange={setNewColourHex} />
           <div className='flex items-center justify-center gap-4 mt-4'>
-            <div className='rounded-full w-10 h-10 border-2 border-lightGrey' style={{backgroundColor: newColourHex}}></div>
+            <div className='rounded-full w-10 h-10 border-2 border-lightGrey' style={{ backgroundColor: newColourHex }}></div>
             <div className='relative before:content-["#"] before:absolute before:top-[9px] before:left-2'>
               <HexColorInput className='text-center w-[10ch] uppercase' color={newColourHex} onChange={setNewColourHex} />
             </div>
@@ -330,7 +330,7 @@ export default function AddSneaker({ session }) {
         {stockXSneakersList?.map(stockXSneaker => (
           <li key={stockXSneaker._id} className='grid grid-cols-[7rem_1fr] p-4 gap-4 border-b border-lightGrey' onClick={() => handleStockXSneakerClick(stockXSneaker)}>
             <div className="w-full h-16 relative">
-              <Image src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain"/>
+              <Image unoptimized src={stockXSneaker.thumbnail || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={stockXSneaker.shoeName} layout="fill" objectFit="contain" />
             </div>
             <div className='flex flex-col justify-center w-[calc(100vw-10rem)]'>
               <p className='text-grey text-sm w-full overflow-hidden whitespace-nowrap text-ellipsis'>{stockXSneaker.silhoutte}</p>

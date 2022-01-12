@@ -46,7 +46,7 @@ export default function Sneakers({ session }) {
         throw error
       }
       const publicThumbnailUrl = publicThumbnailUrlData.publicURL
-      return {...sneaker, publicThumbnailUrl}
+      return { ...sneaker, publicThumbnailUrl }
     }))
     userSneakersData = await Promise.all(userSneakersData.map(async sneaker => {
       const { data: colourData, error } = await supabase
@@ -62,7 +62,7 @@ export default function Sneakers({ session }) {
       if (error) {
         throw error
       }
-      return { ...sneaker, colourData}
+      return { ...sneaker, colourData }
     }))
     setUserSneakers(userSneakersData)
     console.log(userSneakersData)
@@ -92,7 +92,7 @@ export default function Sneakers({ session }) {
 
     setQueryResult(fuse.search(searchQuery))
   }, [searchQuery])
-  
+
   useEffect(() => {
     getUserSneakers()
   }, [session])
@@ -100,7 +100,7 @@ export default function Sneakers({ session }) {
   useEffect(() => {
     console.log(isSneakerViewGrid)
   }, [isSneakerViewGrid])
-  
+
   useEffect(() => {
     console.log(activeSneaker)
   }, [activeSneaker])
@@ -113,9 +113,9 @@ export default function Sneakers({ session }) {
         </input> */}
         <button type="button" className='w-10 h-10' onClick={() => handleChangeViewClick()}>
           {isSneakerViewGrid ? (
-            <Image src="/grid-view.svg" alt="grid-view" width={40} height={40}/>
+            <Image unoptimized src="/grid-view.svg" alt="grid-view" width={40} height={40} />
           ) : (
-            <Image src="/list-view.svg" alt="list-view" width={40} height={40}/>
+            <Image unoptimized src="/list-view.svg" alt="list-view" width={40} height={40} />
           )}
         </button>
       </header>
@@ -126,12 +126,12 @@ export default function Sneakers({ session }) {
         </div>
       ) : userSneakers?.length === 0 ? <h1>No user sneakers yet</h1> : (
         <ul className={`${isSneakerViewGrid ? "grid grid-cols-3 px-4 gap-[1px]" : ""} pt-[calc(40px+3rem)]`}>
-            {userSneakers.map((sneaker) => {
+          {userSneakers.map((sneaker) => {
             const { publicThumbnailUrl, sneaker_model_id: sneakerModelId, sneaker_models: sneakerModel } = sneaker;
             return (
               <li key={sneakerModelId} className={`${isSneakerViewGrid ? "grid-shadow flex justify-center items-center" : "grid grid-cols-[7rem_1fr] p-4 gap-4 border-t border-lightGrey"}`} onClick={() => handleSneakerClick(sneaker)}>
                 <div className={`${isSneakerViewGrid ? "h-24 w-[calc(100%-0.75rem)]" : "h-16 w-full"} relative`}>
-                  <Image src={publicThumbnailUrl || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={sneakerModel.name} layout="fill" objectFit="contain"/>
+                  <Image unoptimized src={publicThumbnailUrl || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={sneakerModel.name} layout="fill" objectFit="contain" />
                 </div>
                 <div className={`${isSneakerViewGrid ? "hidden" : ""} flex flex-col justify-center w-[calc(100vw-10rem)]`}>
                   <p className='text-grey text-sm w-full overflow-hidden whitespace-nowrap text-ellipsis capitalize'>{sneakerModel.sneaker_silhouettes.name}</p>
@@ -146,7 +146,7 @@ export default function Sneakers({ session }) {
       <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
         setShowSneakerModal(false)
-  
+
 
       }}></div>
       {/* Sneaker view modal */}
@@ -154,12 +154,12 @@ export default function Sneakers({ session }) {
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
           setShowSneakerModal(false)
-    
+
         }}>
-          <Image src="/cross.svg" height={20} width={20} alt="Close modal button" />
+          <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
         <div className="w-full h-32 mt-4 relative pointer-events-none">
-          <Image src={activeSneaker?.publicThumbnailUrl || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={activeSneaker?.sneaker_models?.name} layout="fill" objectFit="contain" />
+          <Image unoptimized src={activeSneaker?.publicThumbnailUrl || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={activeSneaker?.sneaker_models?.name} layout="fill" objectFit="contain" />
         </div>
         <div className='flex flex-col items-center justify-center pb-6 px-4'>
           <h4 className='text-grey text-lg text-center capitalize'>{activeSneaker?.sneaker_models?.sneaker_silhouettes?.name}</h4>
@@ -178,17 +178,17 @@ export default function Sneakers({ session }) {
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Can Wear</p>
               <input className="hidden peer" id="wearInRain" type="checkbox" name="wearInRain" checked={activeSneaker.wear_in_rain} onChange={e => e.preventDefault()} />
-                <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
-                  {activeSneaker.wear_in_rain ? "Even in the rain" : "Only on sunny days"}
-                  <div className={`${activeSneaker.wear_in_rain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute left-0 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
-                  <div className={`${activeSneaker.wear_in_rain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute left-0 transition-transform w-[1px] h-2 bg-white`}></div>
-                  <div className={`${activeSneaker.wear_in_rain ? "translate-x-[13px] translate-y-[-6px]" : "translate-x-[13px] translate-y-[-20px]"} absolute left-0 transition-transform duration-250 w-[1px] h-2 bg-white`}></div>
-                </label>
+              <label className="relative flex items-center gap-2 mt-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:left-1 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
+                {activeSneaker.wear_in_rain ? "Even in the rain" : "Only on sunny days"}
+                <div className={`${activeSneaker.wear_in_rain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute left-0 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
+                <div className={`${activeSneaker.wear_in_rain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute left-0 transition-transform w-[1px] h-2 bg-white`}></div>
+                <div className={`${activeSneaker.wear_in_rain ? "translate-x-[13px] translate-y-[-6px]" : "translate-x-[13px] translate-y-[-20px]"} absolute left-0 transition-transform duration-250 w-[1px] h-2 bg-white`}></div>
+              </label>
             </div>
             <div className='border-t-[1px] border-lightGrey p-4'>
               <p className='text-grey text-xs'>Colours</p>
               <div className='grid grid-cols-[repeat(8,30px)] justify-between mt-2'>
-                {activeSneaker.colourData?.map(({user_colours}) => (
+                {activeSneaker.colourData?.map(({ user_colours }) => (
                   <div key={user_colours.id} className='w-[30px] h-[30px] m-auto rounded-full border-[1px] border-lightGrey' style={{ backgroundColor: `#${user_colours.hexcode}` }}></div>
                 ))}
               </div>
