@@ -3,18 +3,22 @@ import { supabase } from "../../utils/supabaseClient"
 import Image from 'next/image'
 import { SpinningLoader } from '../ui/spinningLoader'
 import Fuse from 'fuse.js'
-import { getSneakerColours, deleteSneaker } from '../../utils/index'
+import { getSneakerColours, getUserBrands, deleteSneaker } from '../../utils/index'
 
 export default function Sneakers({ session }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [queryResult, setQueryResult] = useState([])
 
   const [userSneakers, setUserSneakers] = useState(false) // Make a difference between empty array (user has no sneakers) vs page init (show skeleton)
+  const [filteredSneakers, setFilteredSneakers] = useState([])
   const [isSneakerViewGrid, setIsSneakerViewGrid] = useState(true)
   const [activeSneaker, setActiveSneaker] = useState({})
-  const [showSneakerModal, setShowSneakerModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [showFilterModal, setShowFilterModal] = useState(false)
   const [deleteSneakerLoading, setDeleteSneakerLoading] = useState(false)
+  const [filterCanWearInRain, setFilterCanWearInRain] = useState(false)
   const scrollableDetailsRef = useRef(null)
+  const filterBrandsAccordionRef = useRef(null)
 
   const getUserSneakers = async () => {
     let { data: userSneakersData, error } = await supabase
@@ -56,7 +60,7 @@ export default function Sneakers({ session }) {
       return { ...sneaker, colourData }
     }))
     setUserSneakers(userSneakersData.reverse())
-    console.log(userSneakersData)
+    setFilteredSneakers(userSneakersData)
   }
 
   const handleChangeViewClick = () => {
@@ -67,7 +71,7 @@ export default function Sneakers({ session }) {
   const handleSneakerClick = sneaker => {
     getSneakerColours(sneaker.id)
     setActiveSneaker(sneaker)
-    setShowSneakerModal(true)
+    setShowDetailsModal(true)
   }
 
   const handleDeleteSneaker = async () => {
@@ -76,35 +80,75 @@ export default function Sneakers({ session }) {
     setDeleteSneakerLoading(true)
     await deleteSneaker(activeSneaker.id)
     // set show active sneaker modal false
-    setShowSneakerModal(false)
+    setShowDetailsModal(false)
     // refresh allSneakers state
     getUserSneakers()
     // set loading false
     setDeleteSneakerLoading(false)
   }
 
-  useEffect(() => {
+  const handleOpenFilterModalClick = () => {
+    console.log('button clicked')
+    setShowFilterModal(true)
+  }
+
+  const handleFilterSneakersClick = () => {
+    // See which filters are active
+    // check if canWearInRain is checked
+    // check if any brands are checked
+    // check if any colours are checked
+
+    // Set isLoading true
+    // Run Fuse with active filters
+    // Set isLoading false
+    // Close modal
+    // render results
+    console.log(searchQuery)
     const options = {
       includeMatches: true,
+      shouldSort: true,
       minMatchCharLength: 2,
       // threshold: 0.0,
       keys: [
         "custom_name",
+        "wear_in_rain"
       ]
     };
+    const fuseQueryArray = []
 
+    searchQuery !== "" && fuseQueryArray.push({
+      "custom_name": searchQuery
+    })
+
+    filterCanWearInRain && fuseQueryArray.push({
+      "wear_in_rain": "true"
+    })
+    const fuseQuery = {
+      $and: fuseQueryArray
+    }
+
+    if (fuseQueryArray.length === 0) {
+      setShowFilterModal(false)
+      return setFilteredSneakers(userSneakers)
+    }
     const fuse = new Fuse(userSneakers, options);
+    const resultsTest = fuse.search(fuseQuery).map(match => match.item)
+    setShowFilterModal(false)
+    setFilteredSneakers(resultsTest)
+  }
 
-    setQueryResult(fuse.search(searchQuery))
-  }, [searchQuery])
+  useEffect(() => {
+    console.log('queryResult', queryResult)
+  }, [queryResult])
 
   useEffect(() => {
     getUserSneakers()
   }, [session])
-
+  
   useEffect(() => {
-    console.log(isSneakerViewGrid)
-  }, [isSneakerViewGrid])
+    console.log('userSneakers', userSneakers)
+    userSneakers && console.log(getUserBrands(userSneakers))
+  }, [userSneakers])
 
   useEffect(() => {
     console.log(activeSneaker)
@@ -113,9 +157,16 @@ export default function Sneakers({ session }) {
   return (
     <div className="">
       <header className='fixed flex justify-between items-center z-10 top-4 left-4 right-4 bg-lighterGrey rounded-xl p-2'>
-        <h1 className='text-2xl font-semibold'>{userSneakers.length}</h1>
-        {/* <input className='grow bg-lighterGrey pl-8' type="text" name="sneakerQuery" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}>
-        </input> */}
+        <button type='button' className='w-10 h-10' onClick={() => handleOpenFilterModalClick()}>
+          <Image unoptimized src="/filter.svg" height={40} width={40} alt="Magnifying glass" />
+        </button>
+        <h1 className='text-2xl font-semibold'>
+          { 
+            filteredSneakers.length !== userSneakers.length 
+            ? `${filteredSneakers.length} (${userSneakers.length})` 
+            : userSneakers.length
+          }
+        </h1>
         <button type="button" className='w-10 h-10' onClick={() => handleChangeViewClick()}>
           {isSneakerViewGrid ? (
             <Image unoptimized src="/grid-view.svg" alt="grid-view" width={40} height={40} />
@@ -131,7 +182,7 @@ export default function Sneakers({ session }) {
         </div>
       ) : userSneakers?.length === 0 ? <h1>No user sneakers yet</h1> : (
         <ul className={`${isSneakerViewGrid ? "grid grid-cols-3 px-4 gap-[1px]" : ""} pt-[calc(40px+3rem)]`}>
-          {userSneakers.map((sneaker) => {
+          {filteredSneakers.map((sneaker) => {
             const { publicThumbnailUrl, sneaker_model_id: sneakerModelId, sneaker_models: sneakerModel } = sneaker;
             return (
               <li key={sneakerModelId} className={`${isSneakerViewGrid ? "grid-shadow flex justify-center items-center" : "grid grid-cols-[7rem_1fr] p-4 gap-4 border-t border-lightGrey"}`} onClick={() => handleSneakerClick(sneaker)}>
@@ -147,16 +198,90 @@ export default function Sneakers({ session }) {
           })}
         </ul>
       )}
-      {/* Sneaker view modal overlay */}
-      <div className={`${showSneakerModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
+      {/* Filter sneakers modal overlay */}
+      <div className={`${showFilterModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
         e.preventDefault()
-        setShowSneakerModal(false)
+        setShowFilterModal(false)
       }}></div>
-      {/* Sneaker view modal */}
-      <div className={`${showSneakerModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
+      {/* Filter sneakers modal */}
+      <div className={`${showFilterModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
         <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
           e.preventDefault()
-          setShowSneakerModal(false)
+          setShowFilterModal(false)
+          scrollableDetailsRef.current.scrollTop = 0
+        }}>
+          <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
+        </button>
+        <div className='flex flex-col items-center justify-center py-5 px-4 border-b-[1px] border-lightGrey '>
+          <h2 className='font-semibold text-2xl text-center overflow-hidden text-ellipsis whitespace-nowrap w-[calc(100vw-1rem)]'>Find Sneakers</h2>
+        </div>
+        <div className='relative flex p-4 gap-4 border-b border-lightGrey'>
+          <input className='grow bg-lighterGrey pl-8' type="text" name="searchQuery" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}>
+          </input>
+          <div className='absolute left-6 top-[27px] pointer-events-none flex items-center'>
+            <Image unoptimized src="/search.svg" height={20} width={20} alt="Magnifying glass" />
+          </div>
+          <button type='button' className={`${searchQuery !== "" ? "flex" : "hidden"} absolute items-center right-4 top-4 py-[11px] px-[10px]`}
+            onClick={e => {
+              console.log('clear button clicked')
+              e.preventDefault();
+              setSearchQuery("");
+            }
+            }>
+            <Image unoptimized src="/cross-cancel.svg" height={20} width={20} alt="Clear search button" />
+          </button>
+        </div>
+        <div className='border-b-[1px] border-lightGrey p-4 flex justify-between items-center'>
+          <input className="hidden peer" id="wearInRain" type="checkbox" name="wearInRain" onChange={() => setFilterCanWearInRain(filterCanWearInRain => !filterCanWearInRain)} />
+          <p className='font-semibold text-xl'>Can Wear</p>
+          <label className="relative flex flex-row-reverse items-center gap-2 font-semibold overflow-hidden capitalize before:transition-colors before:peer-checked:bg-[#6c7abb] before:bg-[#97dded] before:border-[#72cce3] before:peer-checked:border-[#5e6baa] before:border-2 before:rounded-full before:w-12 before:h-7 after:content-[''] after:transition-transform after:absolute after:h-5 after:w-5 after:rounded-full after:top-1 after:right-6 after:bg-[#fffba9] peer-checked:after:bg-white after:border-[#f6eb71] peer-checked:after:border-[#e7e8ea] after:border-2 peer-checked:after:translate-x-full" htmlFor="wearInRain">
+            {filterCanWearInRain ? "even in the rain" : "on sunny days"}
+            <div className={`${filterCanWearInRain ? "translate-x-[8px] translate-y-[0px]" : "translate-x-[8px] translate-y-[-20px]"} absolute right-12 transition-transform duration-100 w-[1px] h-2 bg-white`}></div>
+            <div className={`${filterCanWearInRain ? "translate-x-[17px] translate-y-[4px]" : "translate-x-[17px] translate-y-[-20px]"} absolute right-12 transition-transform w-[1px] h-2 bg-white`}></div>
+            <div className={`${filterCanWearInRain ? "translate-x-[13px] translate-y-[-6px]" : "translate-x-[13px] translate-y-[-20px]"} absolute right-12 transition-transform duration-250 w-[1px] h-2 bg-white`}></div>
+          </label>
+        </div>
+        <div className='relative overflow-hidden border-b-[1px] border-lightGrey'>
+          <input id="accordionBrands" className='hidden peer' type="checkbox"></input>
+          <label htmlFor="accordionBrands" className=''>
+            <div className='flex items-center justify-between p-4'>
+              <p className='font-semibold text-xl'>Brands</p>
+            </div>
+          </label>
+          <span className="absolute top-7 right-5 w-5 h-[2px] bg-black"></span>
+          <span className="absolute top-7 right-5 w-5 h-[2px] bg-black peer-checked:rotate-0 rotate-90 transition-transform duration-150 ease-linear"></span>
+          <div className='max-h-0 peer-checked:max-h-screen transition-maxHeight duration-300 ease-in-out'>
+            <p className='font-semibold capitalize p-5'>hello</p>
+          </div>
+        </div>
+        <div className='relative overflow-hidden border-b-[1px] border-lightGrey'>
+          <input id="accordionColours" className='hidden peer' type="checkbox" onChange={() => console.log('q')}></input>
+          <label htmlFor="accordionColours" className=''>
+            <div className='flex items-center justify-between p-4'>
+              <p className='font-semibold text-xl'>Colours</p>
+            </div>
+          </label>
+          <span className="absolute top-7 right-5 w-5 h-[2px] bg-black"></span>
+          <span className="absolute top-7 right-5 w-5 h-[2px] bg-black peer-checked:rotate-0 rotate-90 transition-transform duration-300 ease-in-out"></span>
+          <div className='max-h-0 peer-checked:max-h-screen transition-maxHeight duration-300 ease-in-out'>
+            <p className='font-semibold capitalize p-5'>hello</p>
+          </div>
+        </div>
+        <button onClick={() => handleFilterSneakersClick()} className='bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]'>
+          Find Sneaker
+        </button>
+      </div>
+
+      {/* Sneaker view modal overlay */}
+      <div className={`${showDetailsModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
+        e.preventDefault()
+        setShowDetailsModal(false)
+      }}></div>
+      {/* Sneaker view modal */}
+      <div className={`${showDetailsModal ? "translate-x-0" : "translate-y-full"} fixed z-[60] top-8 bottom-0 left-0 right-0 bg-white rounded-tl-3xl rounded-tr-3xl transition-transform duration-[400ms]`}>
+        <button type="button" className='absolute top-4 right-4 flex justify-center items-center p-2' onClick={e => {
+          e.preventDefault()
+          setShowDetailsModal(false)
           scrollableDetailsRef.current.scrollTop = 0
         }}>
           <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
@@ -164,7 +289,7 @@ export default function Sneakers({ session }) {
         <div className="w-full h-32 mt-4 relative pointer-events-none">
           <Image unoptimized src={activeSneaker?.publicThumbnailUrl || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={activeSneaker?.sneaker_models?.name} layout="fill" objectFit="contain" />
         </div>
-        <div className='flex flex-col items-center justify-center pb-6 px-4 border-b-[1px] border-lightGrey '>
+        <div className='flex flex-col items-center justify-center pb-6 px-4 border-b-[1px] border-lightGrey'>
           <h4 className='text-grey text-lg text-center capitalize'>{activeSneaker?.sneaker_models?.sneaker_silhouettes?.name}</h4>
           <h3 className='font-semibold text-xl text-center overflow-hidden text-ellipsis whitespace-nowrap w-[calc(100vw-1rem)]'>{activeSneaker?.sneaker_models?.colourway_name}</h3>
         </div>

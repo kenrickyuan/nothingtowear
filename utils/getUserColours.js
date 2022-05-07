@@ -11,6 +11,6 @@ export const getUserColours = async () => {
   if (error) {
     return console.error(error)
   }
-  console.log(data)
+  console.log('user colours', data)
   return data
 }

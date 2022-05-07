@@ -17,6 +17,5 @@ export const getSneakerColours = async (sneakerId) => {
     return console.error(error)
   }
 
-  console.log(data)
   return data
 }

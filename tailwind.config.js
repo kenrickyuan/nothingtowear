@@ -10,7 +10,11 @@ module.exports = {
       green: '#06aa6d',
       deleteRed: '#fb3d4c'
     },
-    extend: {},
+    extend: {
+      transitionProperty: {
+        'maxHeight': 'max-height',
+      }
+    }
   },
   variants: {
     extend: {},
