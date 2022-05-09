@@ -8,7 +8,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
   let modelId
   let savedThumbnailPath
   const { stockXSneakerData } = sneakerToAddData;
-  console.log(stockXSneakerData)
   const brandName = stockXSneakerData.brand?.trim().toLowerCase()
   const silhouette = stockXSneakerData.silhoutte?.trim().toLowerCase()
   const modelName = stockXSneakerData.shoeName
@@ -26,7 +25,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
   }
   // if brand not yet in DB, add to brands db
   if (brandInDb.length === 0 && brandName && brandName.length !== 0) {
-    console.log('adding brand to db')
     const { data: newBrandInDb, error: newBrandInDbError } = await supabase
       .from('brands')
       .insert([
@@ -39,7 +37,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     brandId = newBrandInDb[0].id
   } else {
     brandId = brandInDb[0]?.id
-    console.log('brand found', brandId)
   }
 
   // See if sneaker silhouette exists by checking 'silhoutte'
@@ -53,7 +50,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
 
   if (silhouetteInDb.length === 0) {
     // if silhouette doesn't exist yet, add to sneaker_silhouettes db
-    console.log("silhouette doesn't exist yet, adding silhouette to db")
 
     const { data: newSilhouetteInDb, error: newSilhouetteInDbError } = await supabase
       .from('sneaker_silhouettes')
@@ -63,12 +59,10 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     if (newSilhouetteInDbError) {
       console.error(newSilhouetteInDbError)
     }
-    console.log({ newSilhouetteInDb })
     // --> get silhouette id
     silhouetteId = newSilhouetteInDb[0].id
   } else {
     silhouetteId = silhouetteInDb[0]?.id
-    console.log('silhouette found', silhouetteId)
   }
   // See if sneaker model already exists by checking styleId(SKU) and shoeName
   const { data: modelInDb, error: modelInDbError } = await supabase
@@ -82,7 +76,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
 
   if (modelInDb.length === 0) {
     // if sneaker model doesn't exist yet, add to sneaker_models db
-    console.log("model doesn't exist yet, adding model to db")
     // Download thumbnail image from stockX
     const thumbnailBase64 = await imageToBase64(stockXSneakerData.thumbnail).catch(error => { return console.error(error) })
     // Upload to our db
@@ -106,14 +99,12 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     if (newModelInDbError) {
       console.error(newModelInDbError)
     }
-    console.log({ newModelInDb })
     // --> get model id
     modelId = newModelInDb[0].id
     savedThumbnailPath = newModelInDb[0].thumbnail_url
   } else {
     modelId = modelInDb[0]?.id
     savedThumbnailPath = modelInDb[0].thumbnail_url
-    console.log('model found', modelInDb[0])
   }
 
   // See if sneaker already exists in user's sneaker db
@@ -126,7 +117,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
   }
   if (existingSneaker.length === 0) {
     // if not, add to user's sneaker db
-    console.log("sneaker doesn't exist yet")
     // set all states to prefill sneaker modal, open modal for user to input data
     const { data: publicThumbnailUrl, error } = await supabase.storage.from('thumbnail-images').getPublicUrl(savedThumbnailPath)
     if (error) {
@@ -138,7 +128,6 @@ export const addSneakerToDb = async ({ sneakerToAddData, setSneakerToAddData, se
     setAddSneakerModalStep("details")
   } else {
     // else, tell them it already exists
-    console.log("sneaker already exists!")
     setAddSneakerModalStep("exists")
   }
 }

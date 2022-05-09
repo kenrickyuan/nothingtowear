@@ -21,10 +21,10 @@ export default function Index() {
 
   useEffect(() => {
     if (router.asPath?.includes("type=recovery")) {
-      console.log(router.asPath)
-      console.log(router.query)
+      // console.log(router.asPath)
+      // console.log(router.query)
       const { token } = router.query
-      console.log({token})
+      // console.log({token})
       setIsRecovery(true)
       setAccessToken(token)
     } else if (triedToLogin && !session) {

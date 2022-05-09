@@ -17,18 +17,18 @@ export default function AccountPage() {
     })
   }, [])
 
-  useEffect(() => {
-    console.log(router.query)
-    // const query = new URLSearchParams(hash.substring(1));
-    // const isRecovery = query.get('type') === 'recovery';
+  // useEffect(() => {
+  //   console.log(router.query)
+  //   // const query = new URLSearchParams(hash.substring(1));
+  //   // const isRecovery = query.get('type') === 'recovery';
 
-    // if (isRecovery) {
-    //   setRecoveryToken(query.get('access_token') ?? null);
-    // }
-    // if (triedToLogin && !session) {
-    //   router.push("/reset")
-    // }
-  }, [session, router])
+  //   // if (isRecovery) {
+  //   //   setRecoveryToken(query.get('access_token') ?? null);
+  //   // }
+  //   // if (triedToLogin && !session) {
+  //   //   router.push("/reset")
+  //   // }
+  // }, [session, router])
 
   return (
     <div className="" >

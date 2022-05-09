@@ -25,14 +25,12 @@ export default function AddSneaker({ session }) {
   const [selectedSneakerColours, setSelectedSneakerColours] = useState([])
 
   const handleSearchSubmit = async e => {
-    console.log('search submitted')
     e.preventDefault()
     searchInputRef.current.blur()
     window.scrollTo(0, 0)
     setStockXSneakersList([])
     setLoading(true)
     const result = await searchSneakers(sneakerQuery)
-    console.log(result)
     setStockXSneakersList(result)
     setLoading(false)
   }
@@ -63,7 +61,6 @@ export default function AddSneaker({ session }) {
       setShowAddSneakerModal(false)
       setAddToDbLoading(false);
       setTimeout(() => {
-        console.log('resetting data')
         setSneakerToAddData({})
         setAddSneakerModalStep("")
         setSelectedSneakerColours([])
@@ -94,7 +91,7 @@ export default function AddSneaker({ session }) {
         const regex = /^[a-zA-Z\s]*$/;
         const key = e.key;
         if (!regex.test(key)) {
-          console.log('invalid key!')
+          // invalid key pressed
           e.preventDefault();
           return false;
         }
@@ -122,10 +119,6 @@ export default function AddSneaker({ session }) {
     })();
   }, [])
 
-  useEffect(() => {
-    console.log(userColours)
-  }, [userColours])
-
   return (
     <div className='mt-[75px]'>
       <div className={`${loading ? "flex" : "hidden"} fixed inset-0 justify-center items-center bg-black opacity-50 z-40`}>
@@ -142,7 +135,6 @@ export default function AddSneaker({ session }) {
           </div>
           <button type='button' className={`${sneakerQuery !== "" ? "flex" : "hidden"} absolute items-center right-4 top-4 py-[11px] px-[10px]`}
             onClick={e => {
-              console.log('clear button clicked')
               e.preventDefault();
               setSneakerQuery("");
               setStockXSneakersList([]);

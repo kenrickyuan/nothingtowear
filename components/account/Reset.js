@@ -6,7 +6,7 @@ export default function Reset({ session, accessToken }) {
   const [newPassword, setNewPassword] = useState("")
 
   useEffect(() => {
-    console.log(accessToken)
+    // console.log(accessToken)
   }, [])
 
   async function updatePassword() {

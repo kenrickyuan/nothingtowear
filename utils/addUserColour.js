@@ -21,7 +21,6 @@ export const addUserColour = async ({ newColourHex, setNewColourHex, newColourNa
 
   if (data.length !== 0) {
     // if user_colour doesn't exist yet, add to user_colourss db
-    console.log("user_colour doesn't exist yet, adding user_colour to db")
     return openErrorModal(`You already have a colour with the hexcode:#${newColourHexCleaned} or name:${newColourNameCleaned}`)
   } else {
     const { data: newUserColourData, error: newUserColourError } = await supabase
@@ -33,7 +32,6 @@ export const addUserColour = async ({ newColourHex, setNewColourHex, newColourNa
       console.error(newUserColourError)
       return openErrorModal("Something went wrong adding the new colour, please try again later or contact Kenrick.")
     }
-    console.log({ newUserColourData })
     setUserColours([...userColours, { id: newUserColourData[0].id, hexcode: newUserColourData[0].hexcode, name: newUserColourData[0].name}])
     setShowCreateUserColourModal(false)
     setNewColourName("")

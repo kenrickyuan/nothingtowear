@@ -11,7 +11,6 @@ export const addUserSneaker = async ({ sneakerToAddData, setAddSneakerModalStep,
     return console.error(existingSneakerError)
   }
   if (existingSneaker.length !== 0) {
-    console.log("sneaker already exists!")
     setAddSneakerModalStep("exists")
   }
   const { data: newUserSneakerInDb, error: newUserSneakerInDbError } = await supabase
