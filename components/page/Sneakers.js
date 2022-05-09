@@ -7,7 +7,6 @@ import { getSneakerColours, getUserColours, getUserBrands, deleteSneaker } from 
 
 export default function Sneakers({ session }) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [queryResult, setQueryResult] = useState([])
 
   const [userSneakers, setUserSneakers] = useState(false) // Make a difference between empty array (user has no sneakers) vs page init (show skeleton)
   const [userBrands, setUserBrands] = useState(false) // Make a difference between empty array (user has no brands) vs page init (show skeleton)
@@ -21,6 +20,7 @@ export default function Sneakers({ session }) {
   const [filterCanWearInRain, setFilterCanWearInRain] = useState(false)
   const [filterSelectedBrands, setFilterSelectedBrands] = useState([])
   const [filterSelectedColourIds, setFilterSelectedColourIds] = useState([])
+  const [filterSearchLoading, setFilterSearchLoading] = useState(false)
   const scrollableDetailsRef = useRef(null)
 
   const getUserSneakers = async () => {
@@ -90,11 +90,6 @@ export default function Sneakers({ session }) {
     setDeleteSneakerLoading(false)
   }
 
-  const handleOpenFilterModalClick = () => {
-    console.log('button clicked')
-    setShowFilterModal(true)
-  }
-
   const handleFilterBrandToggle = (brand) => {
     filterSelectedBrands.length > 0 && filterSelectedBrands.includes(brand) 
       ? setFilterSelectedBrands(filterSelectedBrands => filterSelectedBrands.filter(selectedBrand => selectedBrand !== brand)) 
@@ -133,7 +128,6 @@ export default function Sneakers({ session }) {
     const options = {
       includeMatches: true,
       shouldSort: true,
-      // minMatchCharLength: 2,
       useExtendedSearch: true,
       keys: [
         "custom_name",
@@ -161,7 +155,8 @@ export default function Sneakers({ session }) {
     if (filterSelectedBrands.length > 0) {
       const fuseBrandQueryArray = []
       filterSelectedBrands.forEach(brand => {
-        fuseBrandQueryArray.push({ "sneaker_models.sneaker_silhouettes.brands.name": brand})
+        const brandQuery = `="${brand}"`
+        fuseBrandQueryArray.push({ "sneaker_models.sneaker_silhouettes.brands.name": brandQuery })
       })
       fuseQueryArray.push(
         {
@@ -181,7 +176,6 @@ export default function Sneakers({ session }) {
         }
       )
     }
-
     const fuseQuery = {
       $and: fuseQueryArray
     }
@@ -191,8 +185,10 @@ export default function Sneakers({ session }) {
       return setFilteredSneakers(userSneakers)
     }
     const fuse = new Fuse(userSneakers, options);
-    setShowFilterModal(false)
+    setFilterSearchLoading(true)
     setFilteredSneakers(fuse.search(fuseQuery).map(match => match.item))
+    setFilterSearchLoading(false)
+    setShowFilterModal(false)
   }
 
   useEffect(() => {
@@ -210,7 +206,7 @@ export default function Sneakers({ session }) {
   return (
     <div className="">
       <header className='fixed flex justify-between items-center z-10 top-4 left-4 right-4 bg-lighterGrey rounded-xl p-2'>
-        <button type='button' className='w-10 h-10' onClick={() => handleOpenFilterModalClick()}>
+        <button type='button' className='w-10 h-10' onClick={() => setShowFilterModal(true)}>
           <Image unoptimized src="/filter.svg" height={40} width={40} alt="Magnifying glass" />
         </button>
         <h1 className='text-2xl font-semibold'>
@@ -266,8 +262,8 @@ export default function Sneakers({ session }) {
         }}>
           <Image unoptimized src="/cross.svg" height={20} width={20} alt="Close modal button" />
         </button>
-        <div className='relative flex flex-col items-center justify-center py-5 px-4 border-b-[1px] border-lightGrey '>
-          <button className={`absolute left-4 text-xl underline ${!areFiltersActive() && 'hidden'}`} onClick={() => handleFiltersClear()}>Clear</button>
+        <div className='pointer-events-none relative flex flex-col items-center justify-center py-5 px-4 border-b-[1px] border-lightGrey '>
+          <button className={`pointer-events-auto absolute left-4 text-xl underline ${!areFiltersActive() && 'hidden'}`} onClick={() => handleFiltersClear()}>Clear</button>
           <h2 className='font-semibold text-2xl text-center overflow-hidden text-ellipsis whitespace-nowrap w-[calc(100vw-1rem)]'>Find Sneakers</h2>
         </div>
         <div className='relative flex p-4 gap-4 border-b border-lightGrey'>
@@ -306,7 +302,7 @@ export default function Sneakers({ session }) {
             <span className="absolute top-7 right-5 w-5 h-[2px] bg-black"></span>
             <span className="absolute top-7 right-5 w-5 h-[2px] bg-black peer-checked:rotate-0 rotate-90 transition-transform duration-150 ease-linear"></span>
             <div className='max-h-0 peer-checked:max-h-screen transition-maxHeight duration-300 ease-in-out'>
-              <ul className='flex flex-wrap justify-between p-4 pt-0 gap-3'>
+              <ul className='flex flex-wrap justify-evenly p-4 pt-0 gap-3'>
                 {userBrands && userBrands.map(brand => (
                   <li key={brand} className='flex'>
                     <input id={`checkbox-${brand}`} className='hidden' type="checkbox" onChange={() => handleFilterBrandToggle(brand)}></input>
@@ -317,7 +313,7 @@ export default function Sneakers({ session }) {
             </div>
           </div>
           <div className='relative overflow-hidden border-b-[1px] border-lightGrey'>
-            <input id="accordionColours" className='hidden peer' type="checkbox" onChange={() => console.log('q')}></input>
+            <input id="accordionColours" className='hidden peer' type="checkbox"></input>
             <label htmlFor="accordionColours" className=''>
               <div className='flex items-center gap-2 p-4'>
                 <p className='font-semibold text-xl'>Colours</p>
@@ -327,7 +323,7 @@ export default function Sneakers({ session }) {
             <span className="absolute top-7 right-5 w-5 h-[2px] bg-black"></span>
             <span className="absolute top-7 right-5 w-5 h-[2px] bg-black peer-checked:rotate-0 rotate-90 transition-transform duration-300 ease-in-out"></span>
             <div className='max-h-0 peer-checked:max-h-screen transition-maxHeight duration-300 ease-in-out'>
-              <ul className='flex flex-wrap justify-between p-4 pt-1 gap-3'>
+              <ul className='flex flex-wrap justify-evenly p-4 pt-1 gap-3'>
                 {userColours && userColours.map(colour => {
                   const { name, hexcode, id } = colour;
                   return (
@@ -338,18 +334,14 @@ export default function Sneakers({ session }) {
                         <span className='capitalize' >{name}</span>
                       </label>
                     </li>
-                    // <li key={id} className='flex'>
-                    //   <input id={`checkbox-${name}`} className='hidden' type="checkbox" onChange={() => handleFilterColourToggle(id)}></input>
-                    //   <label htmlFor={`checkbox-${name}`} className={`p-4 rounded-full border-2 border-lighterGrey relative ${filterSelectedColourIds.length > 0 && filterSelectedColourIds.includes(id) && 'after:absolute after:border-2 after:-inset-1.5 after:rounded-full'}`} style={{ backgroundColor: `#${hexcode}`}}></label>
-                    // </li>
                   )
                 })}
               </ul>
             </div>
           </div>
         </div>
-        <button onClick={() => handleFilterSneakersClick()} className='bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]'>
-          Find Sneaker
+        <button onClick={() => handleFilterSneakersClick()} className={`${filterSearchLoading && "h-[50px] pointer-events-none"} bg-black flex justify-center items-center text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`}>
+          {filterSearchLoading ? <SpinningLoader /> : "Find Sneaker"}
         </button>
       </div>
 
