@@ -19,11 +19,12 @@ Does this sound good to you? Currently I've built only an MVP for my personal us
 
 For now if you're curious how it looks you can look at these quick demos I made:
 
-![Browsing](./public/showcase_browse.mp4)
-
-![Filtering](./public/showcase_filter.mp4)
-
-![Adding](./public/showcase_add.mp4)
+<video src="./public/showcase_browse.mp4" controls="controls" style="max-width: 730px;">
+</video>
+<video src="./public/showcase_filter.mp4" controls="controls" style="max-width: 730px;">
+</video>
+<video src="./public/showcase_add.mp4" controls="controls" style="max-width: 730px;">
+</video>
   
 ## How did you build this?
 Nothing To Wear was built with NextJS and Supabase, currently using the [Sneaks-API](https://github.com/druv5319/sneaks-app) to fetch the sneaker related data.
