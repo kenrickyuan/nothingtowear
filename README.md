@@ -17,18 +17,9 @@ Nothing To Wear is a PWA that does the following:
 ## How can I use this?
 Does this sound good to you? Currently I've built only an MVP for my personal use (and a few friends), so if you'd like to try it out feel free to DM me for an invite.
 
-For now if you're curious how it looks you can look at these quick demos I made:
-
-<video src="./public/showcase_browse.mp4" controls="controls" style="max-width: 730px;">
-</video>
-<video src="./public/showcase_filter.mp4" controls="controls" style="max-width: 730px;">
-</video>
-<video src="./public/showcase_add.mp4" controls="controls" style="max-width: 730px;">
-</video>
-  
+For now if you're curious how it looks you can look at these quick demos I made (./public/showcase_XXX.mp4)
 ## How did you build this?
 Nothing To Wear was built with NextJS and Supabase, currently using the [Sneaks-API](https://github.com/druv5319/sneaks-app) to fetch the sneaker related data.
 
 If you're curious about the schema, check it out below courtesy of [Supabase Schema](https://github.com/zernonia/supabase-schema)
 ![Schema](./public/schema.jpg)
-
