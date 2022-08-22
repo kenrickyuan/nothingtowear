@@ -1,35 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Nothing To Wear
 
-## Getting Started
+## What is this app?
+Do you have a sneaker addiction like I do? Is the size of your growing sneaker collection starting to scare you?
 
-First, run the development server:
+If so, Nothing To Wear might just be the app for you!
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Living in a small apartment, I've had to store my sneakers in different bags, boxes, suitcases, and shelves across the apartment. When I'm trying to assemble together an outfit and I have the perfect pair envisioned in my mind, I sometimes find it impossible to remember where I stored it. Sometimes I even forget what pairs I already own!
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Nothing To Wear is a PWA that does the following:
+1. Allows you to add sneakers into your collection using images and data from StockX. No need to go through the hassle of taking pictures of the shoes, or filling in the SKU and other boring data!
+2. Allows you to add a custom name and location notes to your sneakers (To search with)
+3. Allows you to set whether you want to wear this sneaker in the rain or not (To filter with)
+4. Allows you to create user-specific colours, and set colours to sneakers (To filter with)
+5. In the end you're able to go through your collection, filter them by colour, brand, name, etc.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## How can I use this?
+Does this sound good to you? Currently I've built only an MVP for my personal use (and a few friends), so if you'd like to try it out feel free to DM me for an invite.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## How did you build this?
+Nothing To Wear was built with NextJS and Supabase, currently using the [Sneaks-API](https://github.com/druv5319/sneaks-app) to fetch the sneaker related data.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+If you're curious about the schema, check it out below courtesy of [Supabase Schema](https://github.com/zernonia/supabase-schema)
+![Schema](./public/schema.jpg)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# nothingtowear
