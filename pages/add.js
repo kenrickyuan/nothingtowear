@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils'
 import { useRouter } from 'next/router'
-import AddSneaker from '../components/pages/AddSneaker'
+import AddSneaker from '../components/pages/add/index'
+
 
 export default function AddSneakerPage() {
   const router = useRouter()
