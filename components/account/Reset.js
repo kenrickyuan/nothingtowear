@@ -28,7 +28,7 @@ export default function Reset({ session, accessToken }) {
       <p>
       {statusMessage}
       </p>
-      <input autoFocus className='bg-lighterGrey pl-8' type="text" name="newPassword" value={newPassword} onChange={e => setNewPassword(e.target.value)} ></input>
+      <input autoFocus className='bg-lighterGrey pl-8' type="text" name="newPassword" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
       <button className='button' onClick={() => updatePassword()}>submit!</button>
     </div>
   )
