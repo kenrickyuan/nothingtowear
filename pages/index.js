@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils'
 import { useRouter } from 'next/router'
-import Sneakers from '../components/page/Sneakers'
+import Sneakers from '../components/pages/viewSneakers/index'
 import Reset from '../components/account/Reset'
 
 export default function Index() {

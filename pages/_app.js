@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import { Layout } from "../components/ui/layout"
+import { Layout } from "../components/sharedUi/layout"
 import { UIProvider } from "../contexts/index"
 
 function MyApp({ Component, pageProps }) {
