@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { SpinningLoader } from '../../../sharedUi/spinningLoader'
 
 
-export const SneakerViewModal = ({ showDetailsModal, handleSetShowDetailsModal, scrollableDetailsRef, activeSneaker, deleteSneakerLoading }) => {
+export const SneakerViewModal = ({ showDetailsModal, handleSetShowDetailsModal, scrollableDetailsRef, activeSneaker, handleDeleteSneaker, deleteSneakerLoading }) => {
   return (
     <>
       {/* Sneaker view modal overlay */}
