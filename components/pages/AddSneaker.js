@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import { searchSneakers, supabase, addSneakerToDb, addUserSneaker, addUserColour, getUserColours } from '../../utils';
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { useUI } from "../../hooks"
-import { SpinningLoader } from "../ui/spinningLoader"
+import { SpinningLoader } from "../sharedUi/spinningLoader"
 
 export default function AddSneaker({ session }) {
-  const { openErrorModal, closeErrorModal, displayErrorModal } = useUI()
+  const { openErrorModal } = useUI()
   const [sneakerQuery, setSneakerQuery] = useState('')
   const [stockXSneakersList, setStockXSneakersList] = useState([])
   const [sneakerToAddData, setSneakerToAddData] = useState({})
@@ -311,7 +311,7 @@ export default function AddSneaker({ session }) {
               <HexColorInput className='text-center w-[10ch] uppercase' color={newColourHex} onChange={setNewColourHex} />
             </div>
           </div>
-          <input className='mx-auto block mt-4' type="text" placeholder='*Name your colour' onKeyDown={e => handleColourNameInputKeyDown(e)} value={newColourName} onChange={e => setNewColourName(e.target.value)}></input>
+          <input className='mx-auto block mt-4' type="text" placeholder='*Name your colour' onKeyDown={e => handleColourNameInputKeyDown(e)} value={newColourName} onChange={e => setNewColourName(e.target.value)} />
         </div>
         <button disabled={newColourName === "" || addUserColourLoading} className={`${addUserColourLoading && "flex justify-center items-center h-[50px]"} disabled:opacity-20 bg-black text-center text-white absolute left-4 right-4 bottom-4 w-[calc(100%-2rem)] p-4 rounded-[10px] font-semibold text-[18px] leading-[18px]`} type="button" onClick={e => handleAddNewUserColourClick(e)}>
           {addUserColourLoading ? <SpinningLoader /> : "Add Colour"}
