@@ -13,7 +13,7 @@
     "base64-arraybuffer": "^1.0.1",
     "fuse.js": "^6.5.3",
     "image-to-base64": "^2.2.0",
-    "next": "12.0.6",
+    "next": "^12.2.5",
     "next-pwa": "^5.4.4",
     "react": "17.0.2",
     "react-colorful": "^5.5.1",
