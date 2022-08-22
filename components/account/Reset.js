@@ -5,10 +5,6 @@ export default function Reset({ session, accessToken }) {
   const [statusMessage, setStatusMessage] = useState("nothing yet")
   const [newPassword, setNewPassword] = useState("")
 
-  useEffect(() => {
-    // console.log(accessToken)
-  }, [])
-
   async function updatePassword() {
     try {
       setStatusMessage("about to update password")

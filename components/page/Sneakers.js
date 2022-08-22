@@ -67,7 +67,6 @@ export default function Sneakers({ session }) {
   }
 
   const handleChangeViewClick = () => {
-    // window.scrollTo(0, 0)
     setIsSneakerViewGrid(isSneakerViewGrid => !isSneakerViewGrid)
   }
 
@@ -109,9 +108,7 @@ export default function Sneakers({ session }) {
     setFilterSelectedColourIds([]);
   }
 
-  const areFiltersActive = () => {
-    return searchQuery !== "" || filterCanWearInRain || filterSelectedBrands.length > 0 || filterSelectedColourIds.length > 0
-  }
+  const areFiltersActive = () => searchQuery !== "" || filterCanWearInRain || filterSelectedBrands.length > 0 || filterSelectedColourIds.length > 0;
 
   const handleFilterSneakersClick = () => {
     // See which filters are active
