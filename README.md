@@ -22,4 +22,4 @@ For now if you're curious how it looks you can look at these quick demos I made 
 Nothing To Wear was built with NextJS and Supabase, currently using the [Sneaks-API](https://github.com/druv5319/sneaks-app) to fetch the sneaker related data.
 
 If you're curious about the schema, check it out below courtesy of [Supabase Schema](https://github.com/zernonia/supabase-schema)
-![Schema](./public/schema.jpg)
+![Schema](./public/schema.png)
