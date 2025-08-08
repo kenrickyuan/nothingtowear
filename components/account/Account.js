@@ -256,7 +256,7 @@ export default function Account({ session }) {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-deleteRed/20">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-deleteRed mb-4">Danger Zone</h2>
-          <p className="text-grey text-sm mb-4">Once you sign out, you'll need to sign in again to access your collection.</p>
+          <p className="text-grey text-sm mb-4">Once you sign out, you&apos;ll need to sign in again to access your collection.</p>
           <button 
             className="w-full button bg-white text-deleteRed border-2 border-deleteRed py-3 rounded-lg hover:bg-deleteRed hover:text-white transition-all transform hover:scale-105"
             onClick={() => {

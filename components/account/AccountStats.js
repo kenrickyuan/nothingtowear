@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../utils'
 
 export default function AccountStats({ userId }) {
@@ -13,9 +13,9 @@ export default function AccountStats({ userId }) {
     if (userId) {
       fetchStats()
     }
-  }, [userId])
+  }, [userId, fetchStats])
 
-  async function fetchStats() {
+  const fetchStats = useCallback(async () => {
     try {
       // Get sneaker count
       const { data: sneakers, error: sneakerError } = await supabase
@@ -55,7 +55,7 @@ export default function AccountStats({ userId }) {
       console.error('Error fetching stats:', error)
       setStats(prev => ({ ...prev, loading: false }))
     }
-  }
+  }, [userId])
 
   if (stats.loading) {
     return (

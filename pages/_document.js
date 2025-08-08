@@ -28,7 +28,7 @@ class MyDocument extends Document {
           <link rel='manifest' href='/manifest.json' />
           <link rel='mask-icon' href='/icons/safari-pinned-tab.svg' color='#5bbad5' />
           <link rel='shortcut icon' href='/favicon.ico' />
-          <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:300,400,500' />
+          <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap' />
 
           <meta name='twitter:card' content='summary' />
           <meta name='twitter:url' content='https://ihavetoomanyshoes.com' />

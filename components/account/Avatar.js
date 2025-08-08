@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 import { supabase } from "../../utils";
 
 export default function Avatar({ url, size, onUpload }) {
@@ -57,11 +58,12 @@ export default function Avatar({ url, size, onUpload }) {
     <div className="flex flex-col items-center">
       <div className="relative group">
         {avatarUrl ? (
-          <img
+          <Image
             src={avatarUrl}
             alt="Avatar"
+            width={size}
+            height={size}
             className="rounded-full object-cover border-4 border-black"
-            style={{ height: size, width: size }}
           />
         ) : (
           <div
