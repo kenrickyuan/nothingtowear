@@ -6,7 +6,7 @@ import { SpinningLoader } from '../../sharedUi/spinningLoader'
 import { SneakersGrid } from './ui/sneakersGrid'
 import { SneakerViewModal } from './ui/sneakerViewModal'
 import { SneakersFilterModal } from './ui/sneakersFilterModal'
-import { getSneakerColours, getUserColours, getUserBrands, deleteSneaker } from '../../../utils/index'
+import { getSneakerColours, getUserColours, getUserBrands, getUserSilhouettes, deleteSneaker } from '../../../utils/index'
 
 export default function Sneakers({ session }) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -14,6 +14,7 @@ export default function Sneakers({ session }) {
   const [userSneakers, setUserSneakers] = useState(false) // Make a difference between empty array (user has no sneakers) vs page init (show skeleton)
   const [userBrands, setUserBrands] = useState(false) // Make a difference between empty array (user has no brands) vs page init (show skeleton)
   const [userColours, setUserColours] = useState(false) // Make a difference between empty array (user has no colours) vs page init (show skeleton)
+  const [userSneakerSilhouettes, setUserSneakerSilhouettes] = useState(false) // Make a difference between empty array (user has no silhouettes) vs page init (show skeleton)
   const [filteredSneakers, setFilteredSneakers] = useState([])
   
   const [isSneakerViewGrid, setIsSneakerViewGrid] = useState(true);
@@ -26,6 +27,7 @@ export default function Sneakers({ session }) {
   const [deleteSneakerLoading, setDeleteSneakerLoading] = useState(false)
   const [filterCanWearInRain, setFilterCanWearInRain] = useState(false)
   const [filterSelectedBrands, setFilterSelectedBrands] = useState([])
+  const [filterSelectedSilhouettes, setFilterSelectedSilhouettes] = useState([])
   const [filterSelectedColourIds, setFilterSelectedColourIds] = useState([])
   const [filterSearchLoading, setFilterSearchLoading] = useState(false)
   const scrollableDetailsRef = useRef(null)
@@ -111,6 +113,12 @@ export default function Sneakers({ session }) {
       : setFilterSelectedBrands(filterSelectedBrands => [...filterSelectedBrands, brand]);
     }
 
+  const handleFilterSilhouetteToggle = (silhouette) => {
+    filterSelectedSilhouettes.length > 0 && filterSelectedSilhouettes.includes(silhouette) 
+      ? setFilterSelectedSilhouettes(filterSelectedSilhouettes => filterSelectedSilhouettes.filter(selectedSilhouette => selectedSilhouette !== silhouette)) 
+      : setFilterSelectedSilhouettes(filterSelectedSilhouettes => [...filterSelectedSilhouettes, silhouette]);
+    }
+
   const handleFilterColourToggle = (colourId) => {
     filterSelectedColourIds.length > 0 && filterSelectedColourIds.includes(colourId) 
       ? setFilterSelectedColourIds(filterSelectedColourIds => filterSelectedColourIds.filter(selectedColourId => selectedColourId !== colourId))
@@ -121,10 +129,11 @@ export default function Sneakers({ session }) {
     setSearchQuery("");
     setFilterCanWearInRain(false);
     setFilterSelectedBrands([]);
+    setFilterSelectedSilhouettes([]);
     setFilterSelectedColourIds([]);
   }
 
-  const areFiltersActive = () => searchQuery !== "" || filterCanWearInRain || filterSelectedBrands.length > 0 || filterSelectedColourIds.length > 0;
+  const areFiltersActive = () => searchQuery !== "" || filterCanWearInRain || filterSelectedBrands.length > 0 || filterSelectedSilhouettes.length > 0 || filterSelectedColourIds.length > 0;
 
   const handleFilterSneakersClick = () => {
     // See which filters are active
@@ -146,6 +155,7 @@ export default function Sneakers({ session }) {
         "custom_name",
         "wear_in_rain",
         "sneaker_models.name",
+        "sneaker_models.sneaker_silhouettes.name",
         "sneaker_models.sneaker_silhouettes.brands.name",
         "colourData.user_colours.id"
       ]
@@ -174,6 +184,19 @@ export default function Sneakers({ session }) {
       fuseQueryArray.push(
         {
           $or: fuseBrandQueryArray
+        }
+      )
+    }
+
+    if (filterSelectedSilhouettes.length > 0) {
+      const fuseSilhouetteQueryArray = []
+      filterSelectedSilhouettes.forEach(silhouette => {
+        const silhouetteQuery = `="${silhouette}"`
+        fuseSilhouetteQueryArray.push({ "sneaker_models.sneaker_silhouettes.name": silhouetteQuery })
+      })
+      fuseQueryArray.push(
+        {
+          $or: fuseSilhouetteQueryArray
         }
       )
     }
@@ -215,7 +238,10 @@ export default function Sneakers({ session }) {
   }, [session])
   
   useEffect(() => {
-    userSneakers && setUserBrands(getUserBrands(userSneakers))
+    if (userSneakers) {
+      setUserBrands(getUserBrands(userSneakers))
+      getUserSilhouettes().then(userSilhouettesData => setUserSneakerSilhouettes(userSilhouettesData))
+    }
   }, [userSneakers])
 
   return (
@@ -248,7 +274,7 @@ export default function Sneakers({ session }) {
       ) : userSneakers?.length === 0 ? <h1>No user sneakers yet</h1> : (
         <SneakersGrid {... { isSneakerViewGrid, filteredSneakers, handleSneakerClick }} />
       )}
-      <SneakersFilterModal {... { showFilterModal, handleSetShowFilterModal, scrollableDetailsRef, areFiltersActive, handleFiltersClear, searchQuery, handleSetSearchQuery, filterCanWearInRain, toggleFilterCanWearInRain, userBrands, handleFilterBrandToggle, filterSelectedColourIds, filterSelectedBrands, userColours, handleFilterColourToggle, handleFilterSneakersClick, filterSearchLoading}} />
+      <SneakersFilterModal {... { showFilterModal, handleSetShowFilterModal, scrollableDetailsRef, areFiltersActive, handleFiltersClear, searchQuery, handleSetSearchQuery, filterCanWearInRain, toggleFilterCanWearInRain, userBrands, handleFilterBrandToggle, filterSelectedBrands, filterSelectedSilhouettes, userSneakerSilhouettes, handleFilterSilhouetteToggle, filterSelectedColourIds, userColours, handleFilterColourToggle, handleFilterSneakersClick, filterSearchLoading}} />
       <SneakerViewModal {... { showDetailsModal, handleSetShowDetailsModal, scrollableDetailsRef, activeSneaker, handleDeleteSneaker, deleteSneakerLoading }} />
     </div>
   )

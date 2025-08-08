@@ -16,8 +16,10 @@ export default function AccountPage() {
   }, [])
 
   return (
-    <div className="" >
-      {!session ? <Auth /> : <Account key={session.user.id} session={session} />}
+    <div className="min-h-screen bg-gradient-to-br from-white via-lighterGrey to-white">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        {!session ? <Auth /> : <Account key={session.user.id} session={session} />}
+      </div>
     </div>
   )
 }

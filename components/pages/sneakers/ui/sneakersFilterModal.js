@@ -1,3 +1,5 @@
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { SpinningLoader } from '../../../sharedUi/spinningLoader'
 
@@ -15,12 +17,65 @@ export const SneakersFilterModal = (
     filterSelectedBrands,
     userBrands,
     handleFilterBrandToggle,
+    filterSelectedSilhouettes,
+    userSneakerSilhouettes,
+    handleFilterSilhouetteToggle,
     filterSelectedColourIds,
     userColours,
     handleFilterColourToggle,
     handleFilterSneakersClick,
     filterSearchLoading
-  }) => { return (
+  }) => {
+    const [silhouetteSearchQuery, setSilhouetteSearchQuery] = useState('')
+    const [showSilhouetteDropdown, setShowSilhouetteDropdown] = useState(false)
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
+    const dropdownRef = useRef(null)
+    const inputRef = useRef(null)
+    
+    const filteredSilhouettes = userSneakerSilhouettes && userSneakerSilhouettes.filter(silhouette =>
+      silhouette.toLowerCase().includes(silhouetteSearchQuery.toLowerCase()) &&
+      !filterSelectedSilhouettes.includes(silhouette)
+    )
+    
+    
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+            !event.target.closest('[data-dropdown-item]')) {
+          setShowSilhouetteDropdown(false)
+        }
+      }
+      
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+    
+    const handleInputFocus = () => {
+      if (inputRef.current) {
+        const rect = inputRef.current.getBoundingClientRect()
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width
+        })
+      }
+      setShowSilhouetteDropdown(true)
+    }
+    
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && silhouetteSearchQuery.trim()) {
+        e.preventDefault()
+        // Add all matching silhouettes (already filtered to exclude selected ones)
+        filteredSilhouettes.forEach(silhouette => {
+          handleFilterSilhouetteToggle(silhouette)
+        })
+        
+        setSilhouetteSearchQuery('')
+        setShowSilhouetteDropdown(false)
+      }
+    }
+    
+    return (
     <>
       {/* Filter sneakers modal overlay */}
       <div className={`${showFilterModal ? "pointer-events-auto opacity-50" : "pointer-events-none opacity-0"} fixed z-[60] inset-0 bg-black transition-opacity duration-[400ms]`} onTouchMove={e => e.preventDefault()} onClick={e => {
@@ -83,6 +138,54 @@ export const SneakersFilterModal = (
             </div>
           </div>
           <div className='relative overflow-hidden border-b-[1px] border-lightGrey'>
+            <input id="accordionSilhouettes" className='hidden peer' type="checkbox" />
+            <label htmlFor="accordionSilhouettes" className=''>
+              <div className='flex items-center gap-2 p-4'>
+                <p className='font-semibold text-xl'>Silhouettes</p>
+                {filterSelectedSilhouettes?.length > 0 && (<p className='font-semibold text-lg'>({filterSelectedSilhouettes.length})</p>)}
+              </div>
+            </label>
+            <span className="absolute top-7 right-5 w-5 h-[2px] bg-black"></span>
+            <span className="absolute top-7 right-5 w-5 h-[2px] bg-black peer-checked:rotate-0 rotate-90 transition-transform duration-150 ease-linear"></span>
+            <div className='max-h-0 peer-checked:max-h-screen transition-maxHeight duration-300 ease-in-out'>
+              <div className='p-4 pt-0'>
+                {/* Selected silhouettes as pills */}
+                {filterSelectedSilhouettes?.length > 0 && (
+                  <ul className='flex flex-wrap justify-evenly gap-3 mb-3'>
+                    {filterSelectedSilhouettes.map(silhouette => (
+                      <li key={silhouette} className='flex'>
+                        <input id={`checkbox-silhouette-${silhouette}`} className='hidden' type="checkbox" onChange={() => handleFilterSilhouetteToggle(silhouette)} />
+                        <label htmlFor={`checkbox-silhouette-${silhouette}`} className='py-2 px-4 border-2 border-black bg-black text-white rounded-3xl capitalize cursor-pointer'>{silhouette}</label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                
+                {/* Searchable dropdown */}
+                <div className='relative' ref={dropdownRef}>
+                  <input
+                    ref={inputRef}
+                    type='text'
+                    placeholder='Search silhouettes... (Press Enter to add all matches)'
+                    value={silhouetteSearchQuery}
+                    onChange={(e) => {
+                      setSilhouetteSearchQuery(e.target.value)
+                      // Show dropdown when user starts typing and there are available options
+                      if (e.target.value.trim()) {
+                        handleInputFocus()
+                      } else {
+                        setShowSilhouetteDropdown(false)
+                      }
+                    }}
+                    onFocus={handleInputFocus}
+                    onKeyPress={handleKeyPress}
+                    className='w-full bg-lighterGrey pl-4 pr-4 py-2 rounded-lg border border-lightGrey focus:outline-none focus:border-black'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='relative overflow-hidden border-b-[1px] border-lightGrey'>
             <input id="accordionColours" className='hidden peer' type="checkbox" />
             <label htmlFor="accordionColours" className=''>
               <div className='flex items-center gap-2 p-4'>
@@ -114,6 +217,41 @@ export const SneakersFilterModal = (
           {filterSearchLoading ? <SpinningLoader /> : "Find Sneaker"}
         </button>
       </div>
+      
+      {/* Portal dropdown */}
+      {showSilhouetteDropdown && filteredSilhouettes && filteredSilhouettes.length > 0 && typeof window !== 'undefined' &&
+        createPortal(
+          <div 
+            className='fixed z-[70] bg-white border border-lightGrey rounded-lg shadow-lg max-h-48 overflow-y-auto'
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width
+            }}
+          >
+            {filteredSilhouettes.map(silhouette => (
+              <button
+                key={silhouette}
+                type='button'
+                data-dropdown-item
+                className={`w-full text-left px-4 py-2 hover:bg-lighterGrey ${
+                  filterSelectedSilhouettes.includes(silhouette) ? 'bg-black text-white hover:bg-grey' : ''
+                }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleFilterSilhouetteToggle(silhouette)
+                  setSilhouetteSearchQuery('')
+                  setShowSilhouetteDropdown(false)
+                }}
+              >
+                {silhouette}
+              </button>
+            ))}
+          </div>,
+          document.body
+        )
+      }
     </>
   )
 };
